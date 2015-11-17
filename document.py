@@ -9,6 +9,8 @@ class Document(object):
         self.identifier = ""
         self.content_hash = ""
         self.tokens = set()
+        self.parsed = None
+        self.bag = {}
 
 
 def create_doc(filepath, filecontent):
