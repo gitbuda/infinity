@@ -8,7 +8,7 @@ class Document(object):
         self.text = ""
         self.identifier = ""
         self.content_hash = ""
-        self.tokens = set()
+        self.tokens = []
         self.parsed = None
         self.bag = {}
 
