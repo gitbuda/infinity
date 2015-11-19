@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import bager
-import tokenizer
 import numpy as np
 
+from util.timeit import timeit
 from math import log
-from data_structure.document import create_doc_from_files
+from preprocess.preprocessor import preprocess
 
 tf = lambda freq, max_freq: 0.5 + 0.5 * freq / max_freq
 euclidian = lambda x, y: np.sqrt(np.sum((x-y)**2))
@@ -27,9 +26,7 @@ class IRAlgorithm:
     def process(self, raw_files):
         '''
         '''
-        self.documents = create_doc_from_files(raw_files)
-        self.documents = tokenizer.tokenize(self.documents)
-        self.documents = bager.bag(self.documents)
+        self.documents = preprocess(raw_files)
 
         # TODO: extract from here
         # TODO: write more optimal
@@ -65,6 +62,7 @@ class IRAlgorithm:
         # print(self.idf)
         # print(len(self.token_doc_no))
 
+    @timeit
     def run(self, query):
         '''
         '''
