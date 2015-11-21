@@ -19,10 +19,13 @@ if __name__ == '__main__':
     files = parser.parse('20news-18828', 'iso-8859-1')
 
     algorithm = BagOfWords()
+    algorithm = VectorSpace()
+    algorithm = BinaryIndependence()
+
     algorithm.configure()
     algorithm.process(files)
     rank = algorithm.run(query)
-    print(rank)
+    print(rank[:10])
 
     # document1 = documents['20news-18828/comp.graphics/37930']
     # document2 = documents['20news-18828/sci.med/58043']

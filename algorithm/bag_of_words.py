@@ -9,8 +9,10 @@ Each document is observed separately.
 '''
 
 from util.timeit import timeit
-# from heapq import heappop, heappush
+from data_structure.page import Page
 from preprocess.preprocessor import preprocess
+from preprocess.bager import bag_of_documents
+# from heapq import heappop, heappush
 
 
 class IRAlgorithm:
@@ -27,20 +29,12 @@ class IRAlgorithm:
             raw_files: dictionary[document_key] = document_content
         '''
         self.documents = preprocess(raw_files)
-        self.terms = {}
-        for key, document in self.documents.items():
-            for term, no in document.bag.items():
-                docs_no = self.terms.get(term, {})
-                docs_no[key] = no
-                self.terms[term] = docs_no
+        self.docs_bag = bag_of_documents(self.documents)
 
     @timeit
-    def run(self, query, page_num=0, page_size=20):
+    def run(self, query, page=Page(0, 20)):
         '''
         '''
-        start_page = page_num * page_size
-        end_page = start_page + page_size
-
         # TODO: query should be logical statement
 
         # # implementation 1
@@ -69,10 +63,10 @@ class IRAlgorithm:
         # return data
 
         # # implementation 3
-        docs_bag_item = self.terms[query]
+        docs_bag_item = self.docs_bag[query]
         data = []
         for key, bag_item in docs_bag_item.items():
             data.append((key, bag_item))
         data = sorted(data, key=lambda x: x[1], reverse=True)
 
-        return data[start_page:end_page]
+        return data[page.start_index:page.end_index]

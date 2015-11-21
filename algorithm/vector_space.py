@@ -3,8 +3,8 @@
 import numpy as np
 
 from util.timeit import timeit
-from math import log
 from preprocess.preprocessor import preprocess
+from scipy.sparse import csr_matrix
 
 tf = lambda freq, max_freq: 0.5 + 0.5 * freq / max_freq
 euclidian = lambda x, y: np.sqrt(np.sum((x-y)**2))
@@ -17,12 +17,13 @@ class IRAlgorithm:
         '''
         '''
         self.idf = None
-        self.token_doc_no = {}
+        # self.token_doc_no = {}
         # token index
         self.tokens = {}
         self.tokens_no = 0
         self.distance = euclidian
 
+    @timeit
     def process(self, raw_files):
         '''
         '''
@@ -30,37 +31,29 @@ class IRAlgorithm:
 
         # TODO: extract from here
         # TODO: write more optimal
-        # all terms indices
+
+        # IDF
+        self.idf = []
         for key, document in self.documents.items():
             for token in document.bag:
-                # for idf
-                self.token_doc_no[token] = self.token_doc_no.get(token, 0) + 1
-                if token in self.tokens:
-                    continue
-                else:
+                if token not in self.tokens:
+                    self.idf.append(0)
                     self.tokens[token] = self.tokens_no
                     self.tokens_no += 1
-
-        # idf vector
-        self.idf = np.zeros(self.tokens_no)
-        for token, doc_no in self.token_doc_no.items():
-            index = self.tokens[token]
-            self.idf[index] = log(len(self.documents) / doc_no)
+                index = self.tokens[token]
+                self.idf[index] += 1
+        self.idf = np.array(self.idf)
+        self.idf = np.log(1.0 * len(self.documents) / self.idf)
 
         # tf + tf * idf
         for key, document in self.documents.items():
-            document.tf = np.zeros(self.tokens_no)
+            doc_tf = np.zeros(self.tokens_no)
             bag = document.bag
             max_freq = bag[max(bag, key=bag.get)]
             for token in document.bag:
                 index = self.tokens[token]
-                document.tf[index] = tf(bag[token], max_freq)
-            document.w = document.tf * self.idf
-
-        # print(len(self.documents))
-        # print(len(self.idf))
-        # print(self.idf)
-        # print(len(self.token_doc_no))
+                doc_tf[index] = tf(bag[token], max_freq)
+            document.w = csr_matrix(doc_tf * self.idf)
 
     @timeit
     def run(self, query):
@@ -77,7 +70,7 @@ class IRAlgorithm:
 
         ranks = []
         for key, document in self.documents.items():
-            ranks.append((key, self.distance(document.w, query_w)))
+            ranks.append((key, self.distance(document.w.toarray(), query_w)))
 
         ranks = sorted(ranks, key=lambda x: x[1])
 

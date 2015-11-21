@@ -18,3 +18,5 @@ for each document -> list appent -> sort whole list -> ~0.19s
 for each document -> heappush -> create whole list -> ~0.25
 for each document -> heappush -> take first N -> ~0.19s
 for each term -> dictionary[document_id] = bag_value -> 0.0s (selected model)
+
+csr_matrix -> keep memory under control
