@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
+'''
+Information Retrieval Algorithm: Vector Space
+'''
+
 import numpy as np
 
 from util.timeit import timeit
-from preprocess.preprocessor import preprocess
 from scipy.sparse import csr_matrix
+from preprocess.preprocessor import preprocess
 
 tf = lambda freq, max_freq: 0.5 + 0.5 * freq / max_freq
 euclidian = lambda x, y: np.sqrt(np.sum((x-y)**2))
@@ -15,10 +19,9 @@ class IRAlgorithm:
 
     def configure(self, config=None):
         '''
+        The main config is which distance function to use.
         '''
         self.idf = None
-        # self.token_doc_no = {}
-        # token index
         self.tokens = {}
         self.tokens_no = 0
         self.distance = euclidian
@@ -28,9 +31,6 @@ class IRAlgorithm:
         '''
         '''
         self.documents = preprocess(raw_files)
-
-        # TODO: extract from here
-        # TODO: write more optimal
 
         # IDF
         self.idf = []
@@ -45,7 +45,7 @@ class IRAlgorithm:
         self.idf = np.array(self.idf)
         self.idf = np.log(1.0 * len(self.documents) / self.idf)
 
-        # tf + tf * idf
+        # TF * IDF for each document
         for key, document in self.documents.items():
             doc_tf = np.zeros(self.tokens_no)
             bag = document.bag

@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 
+'''
+BInformation Retrieval Algorithm: Binary Indepentence
+
+The problem with this model is that e.g. for one term, let say
+"test" all documents with "test" term inside have the same
+wight sum.
+'''
+
 from util.timeit import timeit
 from data_structure.page import Page
 from preprocess.bager import bag_of_documents
@@ -8,16 +16,20 @@ from preprocess.preprocessor import preprocess
 
 
 class IRAlgorithm:
-    '''
-    '''
+
     def configure(self, config=None):
         '''
+        No configuration.
         '''
         pass
 
     @timeit
     def process(self, raw_files):
         '''
+        1. create documents
+        2. get documents number
+        3. for each term determine all documnets in which
+           that term exists and how many time it occurs (docs_bag)
         '''
         self.documents = preprocess(raw_files)
         self.docs_no = len(self.documents)
@@ -26,6 +38,8 @@ class IRAlgorithm:
     @timeit
     def run(self, query, page=Page(0, 20)):
         '''
+        TODO: finish comment
+        Binary indenpendence model, TAR slides
         '''
         tokens = tokenize_text(query)
         if len(tokens) <= 0:

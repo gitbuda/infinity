@@ -19,11 +19,12 @@ if __name__ == '__main__':
     files = parser.parse('20news-18828', 'iso-8859-1')
 
     algorithm = BagOfWords()
-    algorithm = VectorSpace()
     algorithm = BinaryIndependence()
+    algorithm = VectorSpace()
 
     algorithm.configure()
     algorithm.process(files)
+    rank = algorithm.run(query)
     rank = algorithm.run(query)
     print(rank[:10])
 

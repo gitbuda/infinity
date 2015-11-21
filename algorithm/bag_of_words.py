@@ -6,18 +6,23 @@ Information Retrieval Algorithm: Bag of words
 A document is higher in the ranking table if it
 contains more occurances of specific term.
 Each document is observed separately.
+
+Normalization TODO: write comment
 '''
 
 from util.timeit import timeit
 from data_structure.page import Page
-from preprocess.preprocessor import preprocess
 from preprocess.bager import bag_of_documents
-# from heapq import heappop, heappush
+from preprocess.tokenizer import tokenize_text
+from preprocess.preprocessor import preprocess
 
 
 class IRAlgorithm:
 
     def configure(self, config=None):
+        '''
+        No configuration.
+        '''
         pass
 
     def process(self, raw_files):
@@ -34,39 +39,30 @@ class IRAlgorithm:
     @timeit
     def run(self, query, page=Page(0, 20)):
         '''
+        1. query is tokenized
+        2. for each token get normalized score for each document where
+           it is
+        3. sum all normalized scores
+
+        Why normalization:
+        E.g. let say that query is "test", document "Test one more time."
+        is more relevant than document "Test one more time because something
+        could went wrong."
         '''
-        # TODO: query should be logical statement
+        tokens = tokenize_text(query)
+        if len(tokens) <= 0:
+            return []
 
-        # # implementation 1
-        # docs = []
-        # for key, document in self.documents.items():
-        #     score = document.bag.get(query, 0)
-        #     docs.append((key, score))
-        # docs = sorted(docs, key=lambda x: x[1], reverse=True)
-        # return docs
-
-        # # implementation 2
-        # heap = []
-        # for key, document in self.documents.items():
-        #     score = document.bag.get(query, 0)
-        #     heappush(heap, (-score, key))
-
-        # # clear element from beginning
-        # for i in range(start_page):
-        #     heappop(heap)
-
-        # # take page elements
-        # data = []
-        # for i in range(start_page, end_page):
-        #     data.append(heappop(heap))
-
-        # return data
-
-        # # implementation 3
-        docs_bag_item = self.docs_bag[query]
-        data = []
-        for key, bag_item in docs_bag_item.items():
-            data.append((key, bag_item))
+        data = {}
+        for token in tokens:
+            docs_bag_item = self.docs_bag[token]
+            for doc_key, token_occurrence in docs_bag_item.items():
+                doc_size = len(self.documents[doc_key].tokens)
+                if doc_size <= 0:
+                    normalized = 0
+                else:
+                    normalized = token_occurrence / doc_size
+                data[doc_key] = data.get(doc_key, 0) + normalized
         data = sorted(data, key=lambda x: x[1], reverse=True)
 
         return data[page.start_index:page.end_index]

@@ -1,7 +1,12 @@
 Algoritmi:
-* bag of words
-* vector space algrithm
-* binomial independence
+
+Bag of words. Normalizirana verzija. Broje se pojavljivanja svakog tokena unutar nekog dokumenta. Za svaki token gleda se koliko puta se on pojavio unutar dokumenta i onda se ta vrijednost normalizira s velicinom dokumenta. Na taj nacin se postize da kraci dokumenti u kojima jedno pojavljivanje cini veci postotak unutar dokumenta imaju snazniji utjecaj nego dokumenti u kojima se vise puta pojavljuje doticni token.
+
+Vector space algorithm. Vektorizirana verzija.
+
+Binomial independence.
+
+TODO: Za svaku verziju napraviti opsezna testiranja. 
 
 Docker
 Digital ocean
