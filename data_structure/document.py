@@ -24,13 +24,16 @@ def create_doc(filepath, filecontent):
     return document
 
 
-def create_doc_from_files(files):
+def create_docs_from_files(files):
     '''
     '''
     documents = {}
+    index = 0
     for key, content in files.items():
         document = create_doc(key, content)
+        document.index = index
         documents[key] = document
+        index += 1
     return documents
 
 

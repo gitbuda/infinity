@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from data_structure.document import create_doc_from_files
-from preprocess.tokenizer import tokenize_documents
 from preprocess.bager import bag_of_words
+from preprocess.tokenizer import tokenize_documents
+from data_structure.document import create_docs_from_files
 
 # Set up spaCy
 # from spacy.en import English
@@ -25,7 +25,7 @@ def preprocess(raw_files):
     2. tokenize
     3. create bad of words
     '''
-    documents = create_doc_from_files(raw_files)
+    documents = create_docs_from_files(raw_files)
     documents = tokenize_documents(documents)
     documents = bag_of_words(documents)
 
