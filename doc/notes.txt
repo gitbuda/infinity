@@ -8,6 +8,7 @@ Vector space algorithm. Vektorizirana verzija.
 - broj elemenata u sparse matrici = 2648308
 - gustoca sparce matrice tf * idf = 0,00103068
 
+
 Binomial independence.
 
 TODO: Za svaku verziju napraviti opsezna testiranja. 
@@ -29,3 +30,11 @@ for each document -> heappush -> take first N -> ~0.19s
 for each term -> dictionary[document_id] = bag_value -> 0.0s (selected model)
 
 csr_matrix -> keep memory under control
+
+* load nginx balancer i svojstvo reloadanja.
+* cython i falcon, uwsgi
+* napraviti testove za opterecenje s wrk-om
+* za kvalitetan benchmark potrebno je imati odgovarajuci stroj koji moze opteretiti sustav koji se benchmarka, takodjer je potrebno imati kvalitetnu mrezu koja moze podnjeti veliku kolicinu prometa koja se generira prilikom izvodjenja banchmarka
+
+* napraviti testove s uwsgi-om s vise procesa
+* napravit testove s uwsgi-om iza nginx-a
