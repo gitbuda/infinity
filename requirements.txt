@@ -2,6 +2,8 @@ Cython==0.23.4
 cloudpickle==0.1.1
 cymem==1.30
 falcon==0.3.0
+gevent==1.0.2
+greenlet==0.4.9
 murmurhash==0.24
 numpy==1.10.1
 plac==0.9.1

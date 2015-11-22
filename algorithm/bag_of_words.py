@@ -10,7 +10,7 @@ Each document is observed separately.
 Normalization TODO: write comment
 '''
 
-from util.timeit import timeit
+# from util.timeit import timeit
 from data_structure.page import Page
 from preprocess.bager import bag_of_documents
 from preprocess.tokenizer import tokenize_text
@@ -25,6 +25,7 @@ class IRAlgorithm:
         '''
         pass
 
+    # @timeit
     def process(self, raw_files):
         '''
         Converts the raw files into the documents.
@@ -36,7 +37,7 @@ class IRAlgorithm:
         self.documents = preprocess(raw_files)
         self.docs_bag = bag_of_documents(self.documents)
 
-    @timeit
+    # @timeit
     def run(self, query, page=Page(0, 20)):
         '''
         1. query is tokenized
@@ -55,6 +56,8 @@ class IRAlgorithm:
 
         data = {}
         for token in tokens:
+            if token not in self.docs_bag:
+                continue
             docs_bag_item = self.docs_bag[token]
             for doc_key, token_occurrence in docs_bag_item.items():
                 doc_size = len(self.documents[doc_key].tokens)

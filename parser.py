@@ -28,7 +28,7 @@ def parse(folder_path, encoding):
             with codecs.open(filepath, 'r', encoding) as f:
                 filecontent = f.read()
             files[filepath] = filecontent
-    log.info('Parser is finished')
+    log.info('Parser finished: %s documents' % len(files))
     return files
 
 

@@ -1,0 +1,1 @@
+ab -p json.txt -T application/json -c 1000 -n 2000 http://infinity/api/document
