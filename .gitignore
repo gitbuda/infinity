@@ -3,3 +3,4 @@
 __pycache__/
 py3/
 *.pyc
+bower_components/

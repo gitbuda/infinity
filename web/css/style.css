@@ -1,0 +1,29 @@
+
+.margin-zero {
+	margin: 0 auto;
+}
+
+.top-padding {
+	padding-top: 70px
+}
+
+
+.custom-center {
+	margin: 0 auto;
+	text-align: center;
+}
+
+/* label focus color */
+.input-field input[type=text]:focus + label {
+ color: #2196f3;
+}
+
+/* label underline focus color */
+.input-field input[type=text]:focus {
+	border-bottom: 1px solid #2196f3;
+	box-shadow: 0 1px 0 0 #2196f3;
+}
+
+.pagination li.active {
+	background-color: #2196f3;
+}

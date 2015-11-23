@@ -95,5 +95,7 @@ WRK naredba: wrk -c 100 -d 20 -t 4 http://infinity/api/document -s query.lua
 --
 Nginx je efikasniji od uwsgi servera u http nacinu rada. Iz čega slijedi da je optimalno koristiti uwsgi u socket nacinu rada iza Nginx servera.
 
-
 * napravit testove s uwsgi-om iza nginx-a
+
+Dependency management:
+Cijeli projekt je trentno unutar jednog foldera. To bi se trebalo razložiti na više modula. TODO:  .
