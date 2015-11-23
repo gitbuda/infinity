@@ -13,12 +13,14 @@ Algoritmi:
 TODO: Za svaku verziju napraviti opsezna testiranja. 
 
 Testno racunalo:
-RAM: 7880944 kB 1600MHz
+RAM: 7880944 kB; 1600MHz
 CPU: Intel(R) Core(TM) i3-4010U CPU @ 1.70GHz
-GPU: 
+GPU: GeForce GT 720M; 96 Cuda Cores; 2048 MB
 --------
 
-Docker
+Docker:
+Docker kontejneri pružaju nekoliko zanimljivih svojstava. U prvom redu kontejner pruža izoliranu okolinu za proces koji se u njemu izvršava. Nadalje olakšava se proces ažuriranja instanci aplikacije zato što se jednom krairana slika kontejnera može više puta instancirati kao konkretan kontejner. Na poslijetku, jedina ovisnost koja treba postojati na fizičkom stroju u kojem će se izvršavati proces koji je unutar docker kontejnera je sam docker i ništa više.
+
 Digital ocean
 Mongo
 Redis

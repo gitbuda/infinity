@@ -15,8 +15,8 @@ if __name__ == '__main__':
 
     query = arg.get('q', '')
 
-    # files = parser.parse('20news-18828/rec.autos', 'iso-8859-1')
-    files = parser.parse('20news-18828', 'iso-8859-1')
+    files = parser.parse('20news-18828/rec.autos', 'iso-8859-1')
+    # files = parser.parse('20news-18828', 'iso-8859-1')
 
     algorithm = BagOfWords()
     algorithm = BinaryIndependence()

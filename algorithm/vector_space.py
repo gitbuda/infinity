@@ -8,6 +8,8 @@ import numpy as np
 
 from util.timeit import timeit
 from scipy.sparse import csr_matrix
+from data_structure.page import Page
+from preprocess.tokenizer import tokenize_text
 from preprocess.preprocessor import preprocess
 
 tf = lambda freq, max_freq: 0.5 + 0.5 * freq / max_freq
@@ -56,16 +58,19 @@ class IRAlgorithm:
             document.w = csr_matrix(doc_tf * self.idf)
 
     @timeit
-    def run(self, query):
+    def run(self, query, page=Page(0, 20)):
         '''
         '''
-        if query not in self.tokens:
+        tokens = tokenize_text(query)
+        if len(tokens) <= 0:
             return []
 
-        # TODO: finish
         query_tf = np.zeros(self.tokens_no)
-        index = self.tokens[query]
-        query_tf[index] = tf(1, 1)
+        for token in tokens:
+            if token not in self.tokens:
+                continue
+            index = self.tokens[query]
+            query_tf[index] = tf(1, 1)
         query_w = query_tf * self.idf
 
         ranks = []
