@@ -22,7 +22,10 @@ Docker:
 Docker kontejneri pružaju nekoliko zanimljivih svojstava. U prvom redu kontejner pruža izoliranu okolinu za proces koji se u njemu izvršava. Nadalje olakšava se proces ažuriranja instanci aplikacije zato što se jednom krairana slika kontejnera može više puta instancirati kao konkretan kontejner. Na poslijetku, jedina ovisnost koja treba postojati na fizičkom stroju u kojem će se izvršavati proces koji je unutar docker kontejnera je sam docker i ništa više.
 
 Digital ocean
+
 Mongo
+
+
 Redis
 
 Distribution models:
@@ -43,6 +46,7 @@ csr_matrix -> keep memory under control
 
 uWSGI:
 uWSGI je aplikacijski server koji zna izvršavati WSGI python aplikaciju. uwsgi je žičani (engl. wire) protokol koji se koristi kako bi HTTP server kao što je Nginx znao komunicirati s uWSGI aplikacijom, dakle uwsgi je protokol aplikacijskog sloja. (https://en.wikipedia.org/wiki/Wire_protocol).
+http://uwsgi-docs.readthedocs.org/en/latest/StatsServer.html
 
 Nginx:
 Nginx je visoko propusni (engl. high-performanse) HTTP server.

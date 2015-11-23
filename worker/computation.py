@@ -7,16 +7,16 @@
 import json
 import falcon
 import parser
-from worker.middleware.max_body import max_body
-from worker.middleware.require_json import RequireJSON
-from worker.middleware.json_translator import JSONTranslator
+from common.falcon.middleware.max_body import max_body
+from common.falcon.middleware.require_json import RequireJSON
+from common.falcon.middleware.json_translator import JSONTranslator
 from algorithm.bag_of_words import IRAlgorithm as BagOfWords
 
 
 # Falcon follows the REST architectural style, meaning (among
 # other things) that you think in terms of resources and state
 # transitions, which map to HTTP verbs.
-class DocumentResource:
+class QueryResource:
 
     def __init__(self):
         print("Document Resource init start")
@@ -59,9 +59,5 @@ app = falcon.API(middleware=[
     RequireJSON(),
     JSONTranslator(),
 ])
-
-# Resources are represented by long-lived class instances
-document_resource = DocumentResource()
-
-# things will handle all requests to the '/things' URL path
-app.add_route('/api/document', document_resource)
+query_resource = QueryResource()
+app.add_route('/api/query', query_resource)
