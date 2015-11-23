@@ -112,6 +112,6 @@ app = falcon.API(middleware=[
     RequireJSON(),
     JSONTranslator(),
 ])
-app.add_route('/api/document', DocumentResource())
 app.add_route('/api/document/{identifier}', SingleDocumentResource())
+app.add_route('/api/documents', DocumentResource())
 app.add_route('/api/documents/count', CountDocumentResource())

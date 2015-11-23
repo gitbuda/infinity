@@ -24,7 +24,20 @@ Docker kontejneri pružaju nekoliko zanimljivih svojstava. U prvom redu kontejne
 Digital ocean
 
 Mongo
+MongoDB je dokument baza podataka. Služi kako bi se u nju pohranili različiti ne nužno strukturirani objekti. MongoDB može raditi u više različitih načina rada, najvažniji su: replikacijski model (engl. replica set) i particionirani model (engl. sharded). U ovom radu korištena je samo jedna instance MongoDB baze, no u slučaju da je potrebno dobiti višu propusnost baze napravila bi se promjena konfiguracije u replikacijski model i pokrenulo bi se više instanci base. Promjena koja bi se morala napraviti s klijentske strane bila bi samo promjena konfiguracijskog niza znakova s kojim se klijent spaja na bazu.
 
+Do padataka iz baze podataka pristupa se preko REST sučelja čija se implementacija nalazi u styria-task/database/rest.py.
+REST sučelje:
+GET  /api/documents               -> dohvača dokumente uz straničenje, HTTP parametri: pagenum, pagesize
+POST /api/documents               -> kreira novi dokument ako već ne postoji
+GET  /api/documents/count         -> dohvača ukupan broj dokumenata u sustavu
+GET  /api/documents/{identifier}  -> dohvača pojedini dokument
+
+Pokretanje REST sučelja baze podataka:
+cd database
+PYTHONPATH=~/path/to/styria-task PYTHONHASHSEED=0 ./run.sh
+
+Varijablu okoline PYTHONHASHSEED je potrebno koristiti kako bi ugrađena hash funkcija vračala uvijek isti rezultat. Uz pomoć te funkcije se definira da li dokument već postoji u bazi podataka.
 
 Redis
 
@@ -46,7 +59,7 @@ csr_matrix -> keep memory under control
 
 uWSGI:
 uWSGI je aplikacijski server koji zna izvršavati WSGI python aplikaciju. uwsgi je žičani (engl. wire) protokol koji se koristi kako bi HTTP server kao što je Nginx znao komunicirati s uWSGI aplikacijom, dakle uwsgi je protokol aplikacijskog sloja. (https://en.wikipedia.org/wiki/Wire_protocol).
-http://uwsgi-docs.readthedocs.org/en/latest/StatsServer.html
+TODO: http://uwsgi-docs.readthedocs.org/en/latest/StatsServer.html
 
 Nginx:
 Nginx je visoko propusni (engl. high-performanse) HTTP server.
