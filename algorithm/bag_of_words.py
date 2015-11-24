@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-Information Retrieval Algorithm: Bag of words
+Information Retrieval Algorithm: Bag Of Words
 
 A document is higher in the ranking table if it
 contains more occurances of specific term.

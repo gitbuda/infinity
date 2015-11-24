@@ -49,8 +49,8 @@ if __name__ == '__main__':
 
     print('---- MANUAL ----------')
     print('-q "query"')
-    print('-a "algorithm"')
-    print('-n "number of results"')
+    print('-a "algorithm" -> bag_of_words, vector_space, binary_independence')
+    print('-n "number of results" -> 20')
     print('-d "new document"')
     print('-e exit')
     print('----------------------')
@@ -71,6 +71,7 @@ if __name__ == '__main__':
         document = arg.get_cl(command_line, 'd', '')
 
         if document is not '':
+            # TODO: replace with UUID
             document_hash = str(hash(document))
             files[document_hash] = document
             algorithm_box.files = files

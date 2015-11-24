@@ -2,6 +2,8 @@
 
 '''
 Information Retrieval Algorithm: Vector Space
+
+Standard TF * IDF implementation.
 '''
 
 import numpy as np
@@ -57,6 +59,8 @@ class IRAlgorithm:
                 doc_tf[index] = tf(bag[token], max_freq)
             document.w = csr_matrix(doc_tf * self.idf)
 
+        print("TOKENS NO: %s" % self.tokens_no)
+
     @timeit
     def run(self, query, page=Page(0, 20)):
         '''
@@ -79,4 +83,4 @@ class IRAlgorithm:
 
         ranks = sorted(ranks, key=lambda x: x[1])
 
-        return ranks
+        return ranks[page.start_index:page.end_index]

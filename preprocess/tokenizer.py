@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+'''
+TODO: comment
+'''
+
 import re
 
 special = '[><!@#$%^&*?_~-£():.,"`]'
