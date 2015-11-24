@@ -9,20 +9,27 @@ Algoritmi:
 - gustoca sparce matrice tf * idf = 0,00103068
 
 3. Binomial independence.
+TODO: TAR slideovi, analizirati formule i ostalo
 
-TODO: Za svaku verziju napraviti opsezna testiranja. 
+TODO: Za svaku verziju napraviti opsezna testiranja.
 
+-------------------------- 
 Testno racunalo:
 RAM: 7880944 kB; 1600MHz
 CPU: Intel(R) Core(TM) i3-4010U CPU @ 1.70GHz
 GPU: GeForce GT 720M; 96 Cuda Cores; 2048 MB
---------
-
+--------------------------
 Docker:
 Docker kontejneri pružaju nekoliko zanimljivih svojstava. U prvom redu kontejner pruža izoliranu okolinu za proces koji se u njemu izvršava. Nadalje olakšava se proces ažuriranja instanci aplikacije zato što se jednom krairana slika kontejnera može više puta instancirati kao konkretan kontejner. Na poslijetku, jedina ovisnost koja treba postojati na fizičkom stroju u kojem će se izvršavati proces koji je unutar docker kontejnera je sam docker i ništa više.
-
+--------------------------
 Digital ocean
-
+Digital ocean se koristi kao (engl. deployment) okolina. Prednosti Digital oceana nad ostalim VPS pružateljima su:
+* SSD diskovne jedinice
+* optimizirana KVM virtualizacija
+* povoljna cijena
+* datacentri u Americi, Aziji i Europi
+* jako dobra kontrolna ploča (engl. management panel)
+--------------------------
 Mongo
 MongoDB je dokument baza podataka. Služi kako bi se u nju pohranili različiti ne nužno strukturirani objekti. MongoDB može raditi u više različitih načina rada, najvažniji su: replikacijski model (engl. replica set) i particionirani model (engl. sharded). U ovom radu korištena je samo jedna instance MongoDB baze, no u slučaju da je potrebno dobiti višu propusnost baze napravila bi se promjena konfiguracije u replikacijski model i pokrenulo bi se više instanci base. Promjena koja bi se morala napraviti s klijentske strane bila bi samo promjena konfiguracijskog niza znakova s kojim se klijent spaja na bazu.
 
@@ -38,13 +45,13 @@ cd database
 PYTHONPATH=~/path/to/styria-task PYTHONHASHSEED=0 ./run.sh
 
 Varijablu okoline PYTHONHASHSEED je potrebno koristiti kako bi ugrađena hash funkcija vračala uvijek isti rezultat. Uz pomoć te funkcije se definira da li dokument već postoji u bazi podataka.
-
+--------------------------
 Redis
 
 Distribution models:
 * each client has whole dataset
 * each client has a part of dataset
-
+--------------------------
 TIME:
 * bag_of_words:
 for each document -> list appent -> sort whole list -> ~0.19s
@@ -99,3 +106,15 @@ Nginx je efikasniji od uwsgi servera u http nacinu rada. Iz čega slijedi da je 
 
 Dependency management:
 Cijeli projekt je trentno unutar jednog foldera. To bi se trebalo razložiti na više modula. TODO:  .
+--------------------------
+Osvrt na implementaciju sa stajališta programskog inženjera
+Svaki algoritam je tipa IRAlgorithm koji posjeduje tri metode. config putem koje se prima nekakva konfiguracija algoritma, ako takva za dani algoritam postoji. process kroz koju se radi predprocesiranje podataka. run koja vrača konkretne rezultate. Kako bi se izbjeglo pokretanje predprocesiranja svaki put kada se treba pokrenuti algoritam uveden je razred AlgorithmBox koji posjeduje instance svih dostupnih algoritama u varijabli available_algorithms. U varijabli prepared_algorithms nalaze se samo one instance algoritama za koje je već proveden proces predprocesiranja. Varijabla prepared_algorithms se prilikom svakog postavljanja dokumenata kroz setter files postavi na prazni dictionary. Na taj način se postiže da se kod idučeg dohvačanja nekog algoritma ponovno forsira proces predprocesiranja. Mana ovog pristupa je što svaki algoritam za sebe drži kopiju svih dokumenata i ponavljanje predprocesiranja za svaki algoritam posebno. Prednost je, po mojem mišljenju, svojstvo da svaki algoritam ima izolirani skup podataka s kojim može činiti što je već potrebno kako bi algoritam valjano radio. Odlučio sam se za taj pristup zato što je memorija manji problem od nekakve jednostavnosti korištenja i važnosti da je svaki algoritam za sebe izoliran. 
+--------------------------
+Upute za pokretanje:
+cd infinity
+potrebno je postaviti python virtualni environment ili instalirati ovisnosti koje su navedene u requirements.txt
+python console.py -> CLI sucelje (radit ce i bez argumeneta; argumenti su: -q "query" -a "bag_of_words|vector_space|binary_indenpendence" -n number_of_results)
+
+PS
+infinity > gugol
+
