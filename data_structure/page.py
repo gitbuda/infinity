@@ -1,16 +1,34 @@
 # -*- coding: utf-8 -*-
 
+'''
+Results from any kind of query or search have to be
+paged because if there is let say 1M result objects the client
+for sure doesn't want to see them all at once.
+
+Via object of this class client can define the range of
+results which will be returned.
+'''
+
 
 class Page(object):
-    '''
-    '''
+
     def __init__(self, page_num, page_size):
         '''
+        A page is defined with page number and page size.
+
+        Range is calculated as follows:
+            [page_num * page_size : page_num * page_size + page_size]
+                         ^                          ^
+                         |                          |
+                    start index                 end index
+
+        Args:
+            page_num: order number of page (starts with 0)
+            page_size: number of entities within one page
         '''
         self.start_index = page_num * page_size
         self.end_index = self.start_index + page_size
 
-    # data encapsulation
     @property
     def start_index(self):
         return self.__start_index
