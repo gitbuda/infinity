@@ -27,10 +27,19 @@ def tokenize_documents(documents):
     '''
     assert isinstance(documents, dict)
 
-    for doc_key, document in documents.items():
-        document.tokens = tokenize_text(document.text)
+    valid_documents = {}
 
-    return documents
+    index = 0
+    for doc_key, document in documents.items():
+        tokens = tokenize_text(document.text)
+        if not tokens:
+            continue
+        document.index = index
+        index += 1
+        document.tokens = tokens
+        valid_documents[doc_key] = document
+
+    return valid_documents
 
 if __name__ == '__main__':
     pass

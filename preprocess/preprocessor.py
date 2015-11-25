@@ -23,12 +23,4 @@ def preprocess(raw_files):
     documents = tokenize_documents(documents)
     documents = bag_of_words(documents)
 
-    # remove empty documents
-    non_empty_docs = {}
-    for doc_key, document in documents.items():
-        if len(document.bag) == 0:
-            continue
-        non_empty_docs[doc_key] = document
-    documents = non_empty_docs
-
     return documents

@@ -28,13 +28,14 @@ if __name__ == '__main__':
 
     # get input arguments
     query = arg.get_argv('q', 'test')
-    algorithm_name = arg.get_argv('a', 'bag_of_words')
+    algorithm_name = arg.get_argv('a', 'vector_space')
     number_of_results = int(arg.get_argv('n', 20))
 
     # load local files
+    # files_path = '20news-18828/alt.atheism'
     files_path = '20news-18828'
     logger.info('Loading files...')
-    files = parser.parse('20news-18828', 'iso-8859-1')
+    files = parser.parse(files_path, 'iso-8859-1')
     logger.info('Files from %s are loaded.' % files_path)
 
     # create algorithm box object (context object)

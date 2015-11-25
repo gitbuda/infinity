@@ -32,6 +32,7 @@ def parse(folder_path, encoding):
                 filecontent = strip_newsgroup_header(f.read())
                 filecontent = strip_newsgroup_quoting(filecontent)
                 filecontent = strip_newsgroup_footer(filecontent)
+                filecontent = filecontent.strip()
             files[filepath] = filecontent
     log.info('Parser finished: %s documents' % len(files))
     return files

@@ -2,9 +2,25 @@
 
 '''
 Creates bag of words (for each document dictionary of
-tokens occurance) and bag of documents (for each token
+tokens occurrence) and bag of documents (for each token
 number of documents that contains the term).
 '''
+
+
+def bag(tokens):
+    '''
+    Calculate single bag of word for the list of tokens.
+
+    Args:
+        tokens: list of tokens
+
+    Returns:
+        bag of words: dict[token] = number of occurrences
+    '''
+    bag = {}
+    for token in tokens:
+        bag[token] = bag.get(token, 0) + 1
+    return bag
 
 
 def bag_of_words(documents):
@@ -18,8 +34,8 @@ def bag_of_words(documents):
         dictionary of Documents
     '''
     for doc_key, document in documents.items():
-        for token in document.tokens:
-            document.bag[token] = document.bag.get(token, 0) + 1
+        document.bag = bag(document.tokens)
+
     return documents
 
 
@@ -35,9 +51,11 @@ def bag_of_documents(documents):
         dictionary of Documents
     '''
     terms = {}
+
     for doc_key, document in documents.items():
         for term, occurrences in document.bag.items():
             docs_number = terms.get(term, {})
             docs_number[doc_key] = occurrences
             terms[term] = docs_number
+
     return terms
