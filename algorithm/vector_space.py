@@ -3,19 +3,21 @@
 '''
 Information Retrieval Algorithm: Vector Space
 
-Standard TF * IDF implementation.
+TF * IDF implementation.
 '''
 
+import logging
 import numpy as np
-
 from util.timeit import timeit
+from preprocess.bager import bag
 from scipy.sparse import lil_matrix
 from scipy.sparse import csr_matrix
 from data_structure.page import Page
-from preprocess.bager import bag
 from preprocess.tokenizer import tokenize_text
 from preprocess.preprocessor import preprocess
-from sklearn.metrics.pairwise import euclidean_distances
+from sklearn.metrics.pairwise import cosine_distances
+
+logger = logging.getLogger(__name__)
 
 tf = lambda freq, max_freq: 0.5 + 0.5 * freq / max_freq
 
@@ -26,12 +28,13 @@ class IRAlgorithm:
         '''
         The main config is which distance function to use.
         '''
-        self.distance = euclidean_distances
+        self.distance = cosine_distances
 
     @timeit
     def process(self, raw_files):
         '''
         '''
+        logger.info("Preprocessing...")
         self.documents = preprocess(raw_files)
         self.docs_no = len(self.documents)
 
@@ -55,7 +58,7 @@ class IRAlgorithm:
         for token, freq in bag_of_words.items():
             if token not in self.tokens:
                 continue
-            index = self.tokens[query]
+            index = self.tokens[token]
             query_tf[0, index] = tf(freq, max_freq)
         query_tf = csr_matrix(query_tf)
         query_w = csr_matrix(query_tf.multiply(self.idf))
@@ -97,6 +100,7 @@ class IRAlgorithm:
     @timeit
     def determine_tf(self):
         '''
+        Calculate Term Frequency matrix from all documents.
         '''
         self.tf = lil_matrix((self.docs_no, self.tokens_no))
         for key, document in self.documents.items():
@@ -112,4 +116,7 @@ class IRAlgorithm:
     def calculate_tf_idf(self):
         '''
         '''
+        print(self.tf.shape)
+        print(self.idf.shape)
         self.tf_idf = self.tf.multiply(self.idf)
+        print(self.tf_idf.shape)

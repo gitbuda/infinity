@@ -26,10 +26,16 @@ logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
 
+    # defaults
+    QUERY = 'test'
+    ALGORITHM = 'bag_of_words'
+    RESULTS = 20
+    DOCUMENT = ''
+
     # get input arguments
-    query = arg.get_argv('q', 'test')
-    algorithm_name = arg.get_argv('a', 'vector_space')
-    number_of_results = int(arg.get_argv('n', 20))
+    query = arg.get_argv('q', QUERY)
+    algorithm_name = arg.get_argv('a', ALGORITHM)
+    number_of_results = int(arg.get_argv('n', RESULTS))
 
     # load local files
     # files_path = '20news-18828/alt.atheism'
@@ -66,10 +72,10 @@ if __name__ == '__main__':
             print("Bye!")
             break
 
-        query = arg.get_cl(command_line, 'q', 'test')
-        algorithm_name = arg.get_cl(command_line, 'a', 'bag_of_words')
-        number = int(arg.get_cl(command_line, 'n', 20))
-        document = arg.get_cl(command_line, 'd', '')
+        query = arg.get_cl(command_line, 'q', QUERY)
+        algorithm_name = arg.get_cl(command_line, 'a', ALGORITHM)
+        number = int(arg.get_cl(command_line, 'n', RESULTS))
+        document = arg.get_cl(command_line, 'd', DOCUMENT)
 
         if document is not '':
             # TODO: replace with UUID

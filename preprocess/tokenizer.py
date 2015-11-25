@@ -5,6 +5,7 @@ TODO: comment
 '''
 
 import re
+from stemming.porter2 import stem
 
 special = '[><!@#$%^&*?_~-£():.,"`]'
 spacer = lambda x: re.sub(special, ' ', x.lower())
@@ -19,11 +20,17 @@ def tokenize_text(text):
     tokens = list(filter(lambda x: len(x) < 25, tokens))
     pattern = '^[a-z0-9]*$'
     tokens = list(filter(lambda x: re.search(pattern, x), tokens))
+    tokens = list(map(lambda x: stem(x), tokens))
     return tokens
 
 
 def tokenize_documents(documents):
     '''
+    For each document create list of tokens.
+    Remove documents with empty list of tokens.
+
+    Args:
+        documents: dict of documents
     '''
     assert isinstance(documents, dict)
 
@@ -40,6 +47,3 @@ def tokenize_documents(documents):
         valid_documents[doc_key] = document
 
     return valid_documents
-
-if __name__ == '__main__':
-    pass

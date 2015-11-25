@@ -74,6 +74,6 @@ class IRAlgorithm:
                 else:
                     normalized = token_occurrence / doc_size
                 data[doc_key] = data.get(doc_key, 0) + normalized
-        data = sorted(data, key=lambda x: x[1], reverse=True)
+        data = sorted(data, key=data.get, reverse=True)
 
         return data[page.start_index:page.end_index]

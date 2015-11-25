@@ -1,12 +1,22 @@
+Predprocesiranje:
+tokenizacija -> dijeljenje rečenica na riječi i izbacivanje specijalnih znakova
+stemming -> TODO malo opisati, optimalan izbor zato što recimo ne bi se trebao 'is' transformirati u 'be' kao što to radi lematizator. Drasticno podigao vrijeme predprocesiranja (porter2 implementacija iz stemming)
+lemmatization -> spacy vs nltk (spacy je brži i njega bi koristio kada bi trebao raditi lematizaciju)
+-------------------------- 
 Algoritmi:
 
 1. Bag of words. Normalizirana verzija. Broje se pojavljivanja svakog tokena unutar nekog dokumenta. Za svaki token gleda se koliko puta se on pojavio unutar dokumenta i onda se ta vrijednost normalizira s velicinom dokumenta. Na taj nacin se postize da kraci dokumenti u kojima jedno pojavljivanje cini veci postotak unutar dokumenta imaju snazniji utjecaj nego dokumenti u kojima se vise puta pojavljuje doticni token.
+
+DOBRO: brzina, jednostavnost, normalizacija
+LOSE: ne uzima nikakvu globalnu informaciju
 
 2. Vector space algorithm. Vektorizirana verzija.
 - broj dokumeneta (redaka) = 18828
 - broj rijeci (stupaca) = 136471
 - broj elemenata u sparse matrici = 2648308
 - gustoca sparce matrice tf * idf = 0,00103068
+
+- vektorska implementacija -> drasticno povecala performanse
 
 3. Binomial independence.
 TODO: TAR slideovi, analizirati formule i ostalo
