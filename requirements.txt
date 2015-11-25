@@ -13,6 +13,7 @@ preshed==0.43
 pymongo==3.1.1
 python-mimeparse==0.1.4
 redis==2.10.5
+scikit-learn==0.17
 scipy==0.16.1
 six==1.10.0
 spacy==0.99

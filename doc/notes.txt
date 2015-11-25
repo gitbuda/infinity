@@ -114,7 +114,21 @@ Upute za pokretanje:
 cd infinity
 potrebno je postaviti python virtualni environment ili instalirati ovisnosti koje su navedene u requirements.txt
 python console.py -> CLI sucelje (radit ce i bez argumeneta; argumenti su: -q "query" -a "bag_of_words|vector_space|binary_indenpendence" -n number_of_results)
-
+--------------------------
+Ovisnosti:
+falcon -> web server
+uwsgi -> wsgi kontejner
+gunicorn -> samo korišten u testiranju
+numpy -> matrične operacije
+pymongo -> adapter za MongoDB
+redis -> pub/sub, raspodijeljeni lock
+scikit-learn -> matrične operacije nad sparse matricama
+scipy -> sparse matrice
+nginx -> http server, load balancer
+docker -> kontejner za procese
+angular -> MVC web framework
+materializecss -> google material design css
+--------------------------
 PS
 infinity > gugol
 
