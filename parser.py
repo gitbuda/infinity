@@ -29,6 +29,7 @@ def parse(folder_path, encoding):
         for filename in filenames:
             filepath = path.join(dirpath, filename)
             with codecs.open(filepath, 'r', encoding) as f:
+                # filecontent = f.read()
                 filecontent = strip_newsgroup_header(f.read())
                 filecontent = strip_newsgroup_quoting(filecontent)
                 filecontent = strip_newsgroup_footer(filecontent)

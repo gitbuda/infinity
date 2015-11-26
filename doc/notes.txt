@@ -16,6 +16,8 @@ LOSE: ne uzima nikakvu globalnu informaciju
 - broj elemenata u sparse matrici = 2648308
 - gustoca sparce matrice tf * idf = 0,00103068
 
+Ovaj algoritam bi trebalo kombinirati s nekim koji prije njega pripremi dokumenta koji ce se ranigrati, tako da njemu ostanu samo dokumenti koji su unutar query-a.
+
 - vektorska implementacija -> drasticno povecala performanse
 
 3. Binomial independence.

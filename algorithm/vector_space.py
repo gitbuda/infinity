@@ -116,7 +116,4 @@ class IRAlgorithm:
     def calculate_tf_idf(self):
         '''
         '''
-        print(self.tf.shape)
-        print(self.idf.shape)
         self.tf_idf = self.tf.multiply(self.idf)
-        print(self.tf_idf.shape)
