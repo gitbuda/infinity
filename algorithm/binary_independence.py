@@ -92,6 +92,7 @@ class IRAlgorithm:
                 result += math.log(0.5 / ratio)
             if result > 0:
                 results.append((doc_key, result))
+
         results = sorted(results, key=lambda x: x[1], reverse=True)
 
         return results[page.start_index:page.end_index]

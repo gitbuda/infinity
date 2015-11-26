@@ -17,6 +17,7 @@ Implemented algorithms:
 import shlex
 import parser
 import logging
+import readline  # NOQA
 import util.argument as arg
 from data_structure.page import Page
 from algorithm.algorithm_box import AlgorithmBox
@@ -28,7 +29,7 @@ if __name__ == '__main__':
 
     # defaults
     QUERY = 'test'
-    ALGORITHM = 'vector_space'
+    ALGORITHM = 'binary_independence'
     RESULTS = 20
     DOCUMENT = ''
 
@@ -68,7 +69,7 @@ if __name__ == '__main__':
     # everything else will be ignored
 
     while True:
-        command_line = shlex.split(input('Arguments:'))
+        command_line = shlex.split(input('Infinity > '))
         if '-e' in command_line:
             print("Bye!")
             break
@@ -88,7 +89,10 @@ if __name__ == '__main__':
             continue
 
         # execute algorithm
-        page = Page(0, number)
-        algorithm = algorithm_box.algorithm(algorithm_name)
-        rank = algorithm.run(query, page)
-        logger.info("Result: %s" % rank)
+        try:
+            page = Page(0, number)
+            algorithm = algorithm_box.algorithm(algorithm_name)
+            rank = algorithm.run(query, page)
+            logger.info("Result: %s" % rank)
+        except Exception as e:
+            logger.info(str(e))

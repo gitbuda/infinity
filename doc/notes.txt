@@ -113,19 +113,22 @@ Normalizirani bag of words nginx + uwsgi s 4 procesa u socket nacinu rada -> 191
 WRK naredba: wrk -c 100 -d 20 -t 4 http://infinity/api/document -s query.lua
 --
 Nginx je efikasniji od uwsgi servera u http nacinu rada. Iz čega slijedi da je optimalno koristiti uwsgi u socket nacinu rada iza Nginx servera.
-
-* napravit testove s uwsgi-om iza nginx-a
-
+--------------------------
 Dependency management:
 Cijeli projekt je trentno unutar jednog foldera. To bi se trebalo razložiti na više modula. TODO:  .
 --------------------------
 Osvrt na implementaciju sa stajališta programskog inženjera
 Svaki algoritam je tipa IRAlgorithm koji posjeduje tri metode. config putem koje se prima nekakva konfiguracija algoritma, ako takva za dani algoritam postoji. process kroz koju se radi predprocesiranje podataka. run koja vrača konkretne rezultate. Kako bi se izbjeglo pokretanje predprocesiranja svaki put kada se treba pokrenuti algoritam uveden je razred AlgorithmBox koji posjeduje instance svih dostupnih algoritama u varijabli available_algorithms. U varijabli prepared_algorithms nalaze se samo one instance algoritama za koje je već proveden proces predprocesiranja. Varijabla prepared_algorithms se prilikom svakog postavljanja dokumenata kroz setter files postavi na prazni dictionary. Na taj način se postiže da se kod idučeg dohvačanja nekog algoritma ponovno forsira proces predprocesiranja. Mana ovog pristupa je što svaki algoritam za sebe drži kopiju svih dokumenata i ponavljanje predprocesiranja za svaki algoritam posebno. Prednost je, po mojem mišljenju, svojstvo da svaki algoritam ima izolirani skup podataka s kojim može činiti što je već potrebno kako bi algoritam valjano radio. Odlučio sam se za taj pristup zato što je memorija manji problem od nekakve jednostavnosti korištenja i važnosti da je svaki algoritam za sebe izoliran. 
 --------------------------
+Deployment okolina:
+Svi upiti klijenata dolaze na Nginx load balancer koji ima izrazito veliku propusnost. Nakon toga load banancer prosljedjuje upit na worker instance koje svaka za sebe imaju cijeli dataset i znaju vratiti odgovarajuci rezultat. Dataset worker instance preuzimaju od db interface instance, a ne direktno iz baze. Trenutno je u deploymentu samo jedna instanca sucelja prema bazi, ali u produkciji tu moze biti opet load balancer i vise instanci interface-a prema bazi podataka. Baza podataka je MongoDB, takodjer samo jedna instanca, no u praksi tu moze doci mongo replica set ili mongo shard cluster.
+
+Kao sto se vidi na grafu, sve instance imaju simbolicka imena (FQDN). To je takodjer izrazito bitno jer se time postize transparentnost pristupa i migracijska transparentnost. U konkretnoj implementaciji sva imena su definirana u /etc/hosts file-u na deploy stroju, no u produkciji ce imene biti definirana na redundantnim DNS serverima.
+--------------------------
 Upute za pokretanje:
 cd infinity
-potrebno je postaviti python virtualni environment ili instalirati ovisnosti koje su navedene u requirements.txt
-python console.py -> CLI sucelje (radit ce i bez argumeneta; argumenti su: -q "query" -a "bag_of_words|vector_space|binary_indenpendence" -n number_of_results)
+potrebno je postaviti python virtualni environment ili instalirati ovisnosti koje su navedene u requirements.txt TODO: napisati skriptu koja se pokrece sa source setup.py
+python console.py -> CLI sucelje (argumenti su: -q "query" -a "bag_of_words|vector_space|binary_indenpendence" -n number_of_results)
 --------------------------
 Ovisnosti:
 falcon -> web server
@@ -140,6 +143,8 @@ nginx -> http server, load balancer
 docker -> kontejner za procese
 angular -> MVC web framework
 materializecss -> google material design css
+--------------------------
+Budući da u opčenitom slučaju postoji potreba da dokumenti budu tajni, komunikacija između klijenta i poslužitalja odvija se putem protokola HTTPS. (TODO, priority low)
 --------------------------
 PS
 infinity > gugol
