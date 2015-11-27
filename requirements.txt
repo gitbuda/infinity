@@ -17,6 +17,7 @@ scikit-learn==0.17
 scipy==0.16.1
 six==1.10.0
 spacy==0.99
+stemming==1.0.1
 text-unidecode==1.0
 thinc==4.0.0
 ujson==1.33

@@ -15,11 +15,11 @@ from scipy.sparse import csr_matrix
 from data_structure.page import Page
 from preprocess.tokenizer import tokenize_text
 from preprocess.preprocessor import preprocess
-from sklearn.metrics.pairwise import cosine_distances
+from sklearn.metrics.pairwise import euclidean_distances
 
 logger = logging.getLogger(__name__)
 
-tf = lambda freq, max_freq: 0.5 + 0.5 * freq / max_freq
+tf = lambda freq, max_freq: freq / max_freq
 
 
 class IRAlgorithm:
@@ -27,12 +27,20 @@ class IRAlgorithm:
     def configure(self, config=None):
         '''
         The main config is which distance function to use.
+
+        Default is euclidean because it is faster.
         '''
-        self.distance = cosine_distances
+        self.distance = euclidean_distances
 
     @timeit
     def process(self, raw_files):
         '''
+        Converts the raw files into the documents.
+
+        Calculates tf, idf, tf * idf.
+
+        Args:
+            raw_files: dict[identifier] = text
         '''
         logger.info("Preprocessing...")
         self.documents = preprocess(raw_files)
@@ -40,11 +48,24 @@ class IRAlgorithm:
 
         self.determine_idf()
         self.determine_tf()
-        self.calculate_tf_idf()
+        self.tf_idf = self.tf.multiply(self.idf)
 
     @timeit
     def run(self, query, page=Page(0, 20)):
         '''
+        Procedure:
+            1. tokenize the query
+            2. calculate query weight
+            3. calculate all distances
+            4. sort distances
+            5. return sorted result
+
+        Args:
+            query: query string
+            page: page size and offset
+
+        Returns:
+            list of identifiers
         '''
         # tokenize query
         tokens = tokenize_text(query)
@@ -70,22 +91,35 @@ class IRAlgorithm:
         distances = distances[:, 0]
         sorted_indices = np.argsort(distances)
         top = sorted_indices[page.start_index:page.end_index]
-
         f = np.vectorize(lambda x: self.iterative_docs[x])
+        result = list(f(top))
 
-        return list(f(top))
+        return result
 
     @timeit
     def determine_idf(self):
         '''
+        Calculate Inverse Frequency vector from all documents.
+
+                                |D|
+        idf_i = log(---------------------------)
+                    |{d elem D | t_i elem D_j}|
+
+        This metdod also calculates tokens dict, tokens number
+        and iterative_docs (list of all document identifiers).
+        TODO: move that calculation outside or replace the
+        documents ditc with the list.
+
+        Returns:
+            nothing but self.idf is recalculated one column
+            csr_matrix
         '''
         self.tokens = {}
-        # tokens number
         self.tokens_no = 0
         self.idf = []
-        self.iterative_docs = []
+        self.iterative_docs = [0] * len(self.documents)
         for key, document in self.documents.items():
-            self.iterative_docs.append(key)
+            self.iterative_docs[document.index] = key
             for token in document.bag:
                 if token not in self.tokens:
                     self.idf.append(0)
@@ -101,8 +135,16 @@ class IRAlgorithm:
     def determine_tf(self):
         '''
         Calculate Term Frequency matrix from all documents.
+
+                                freq(t_i, d_j)
+        tf(t_i, d_j) = --------------------------------
+                        max(freq(k, d_j) | k elem D_j)
+
+        Returns:
+            nothing but self.tf is recalculated csr_matrix
         '''
         self.tf = lil_matrix((self.docs_no, self.tokens_no))
+
         for key, document in self.documents.items():
             bag = document.bag
             max_freq = bag[max(bag, key=bag.get)]
@@ -110,10 +152,5 @@ class IRAlgorithm:
                 token_index = self.tokens[token]
                 doc_index = document.index
                 self.tf[doc_index, token_index] = tf(bag[token], max_freq)
-        self.tf = self.tf.tocsr()
 
-    @timeit
-    def calculate_tf_idf(self):
-        '''
-        '''
-        self.tf_idf = self.tf.multiply(self.idf)
+        self.tf = self.tf.tocsr()

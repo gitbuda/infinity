@@ -28,8 +28,8 @@ logger = logging.getLogger(__name__)
 if __name__ == '__main__':
 
     # defaults
-    QUERY = 'test'
-    ALGORITHM = 'binary_independence'
+    QUERY = 'test case'
+    ALGORITHM = 'vector_space'
     RESULTS = 20
     DOCUMENT = ''
 
@@ -39,9 +39,9 @@ if __name__ == '__main__':
     number_of_results = int(arg.get_argv('n', RESULTS))
 
     # load local files
-    # files_path = 'test-2'
-    files_path = '20news-18828/alt.atheism'
-    # files_path = '20news-18828'
+    # files_path = 'test-small'
+    # files_path = '20news-18828/alt.atheism'
+    files_path = '20news-18828'
     logger.info('Loading files...')
     files = parser.parse(files_path, 'iso-8859-1')
     logger.info('Files from %s are loaded.' % files_path)

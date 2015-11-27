@@ -1,29 +1,39 @@
 Predprocesiranje:
-tokenizacija -> dijeljenje rečenica na riječi i izbacivanje specijalnih znakova
-stemming -> TODO malo opisati, optimalan izbor zato što recimo ne bi se trebao 'is' transformirati u 'be' kao što to radi lematizator. Drasticno podigao vrijeme predprocesiranja (porter2 implementacija iz stemming)
-lemmatization -> spacy vs nltk (spacy je brži i njega bi koristio kada bi trebao raditi lematizaciju)
+tokenizacija -> dijeljenje rečenica na riječi:
+  1. izbacivanje specijalnih znakova (zamjena sa prazninama)
+  2. odbacivanje riječi koje su duže od 25 znakova
+  3. stemming
+    Korišten je Snowball (Porter2) stemmer zato što je manje agresivan od Lancaster stemmer-a, a brži od Porter stemmera. Uvođenjem stemmer-a naraslo je vrijeme izvođenja pretprocesiranja i to za ~4 puta (koristi se stemming python modul). Trebalo bi koristiti neku brzu c/c++ implementaciju stemming postupka.
+
+Nije se koristio lematizator zato što mislim da je bitno očuvati riječi što je moguče više onakve kakve jesu. Primjerice, ne bi bilo dobro zamijeniti is sa be, jer je korisnik možda baš htio dokumente gdje se pojavljuje is. Lematizator bi is token zamijenio s be tokenom i tu bi se izbugila informacija. Kada bi postojala potreba za lematizatorom tada bi se uz python koristio spacy lematizator i to zato što je brži od nltk stemmer-a. 
 -------------------------- 
 Algoritmi:
 
-1. Bag of words. Normalizirana verzija. Broje se pojavljivanja svakog tokena unutar nekog dokumenta. Za svaki token gleda se koliko puta se on pojavio unutar dokumenta i onda se ta vrijednost normalizira s velicinom dokumenta. Na taj nacin se postize da kraci dokumenti u kojima jedno pojavljivanje cini veci postotak unutar dokumenta imaju snazniji utjecaj nego dokumenti u kojima se vise puta pojavljuje doticni token.
+1. Bag of words. Normalizirana verzija. Broje se pojavljivanja svakog tokena unutar nekog dokumenta. Za svaki token gleda se koliko puta se on pojavio unutar dokumenta i onda se ta vrijednost normalizira s velicinom dokumenta. Na taj način se postiže da kraći dokumenti u kojima broj pojavljivanje čini veći postotak unutar dokumenta imaju snažniji utjecaj nego dokumenti u kojima se više puta pojavljuje dotični token.
 
 DOBRO: brzina, jednostavnost, normalizacija
 LOSE: ne uzima nikakvu globalnu informaciju
 
-2. Vector space algorithm. Vektorizirana verzija.
+2. Vector space algorithm
+
+Veličina problema:
 - broj dokumeneta (redaka) = 18828
 - broj rijeci (stupaca) = 136471
 - broj elemenata u sparse matrici = 2648308
 - gustoca sparce matrice tf * idf = 0,00103068
 
-Ovaj algoritam bi trebalo kombinirati s nekim koji prije njega pripremi dokumenta koji ce se ranigrati, tako da njemu ostanu samo dokumenti koji su unutar query-a.
+Prilikom dodavanja elementa, u trenutnoj verziji, svaki algoritam provodi postupak predprocesiranja iz početka. To bi se trebalo optimizirati tako da se ažuriraju samo one vrijednosti koje su stvarno potrebne da se ažuriraju. TODO
 
-- vektorska implementacija -> drasticno povecala performanse
+Inicijalna implementacija vector space modela bila je iterativna. Dakle za svaki dokument pretprocesiranjem se odredio vektor TF * IDF, a prilikom rangiranja, za svaki dokument se izračunala mjera udaljenosti. Takva implementaija, za dani dataset dala je rezultat za red veličine 10s, što je neprihvatljivo. Trenutna implementacija algoritma koristi množenje sparse matrice i vektora (po svakom retku) i takva implementacija daje rezultat u vremenu od reda valičine 10ms, što je puno prihvatljivije.
+
+Kao mjere udaljenosti razmatrane su euklidska i kosinusna udaljenost. Kosinusna udaljenost dala je vrijeme izvođenja upita ~25ms, dok je euklidska udaljenost dala vrijeme izvođenja upita ~40ms. Stoga je odabrana euklidska udaljenost.
 
 3. Binomial independence.
-TODO: TAR slideovi, analizirati formule i ostalo
+Implementacija složenost algoritma ovisi o broju dokumenata nad kojima se vrši rangiranje. Konkretno, za dani upit potrebno je obići sve dokumente kako bi se dobila procijenjena vjerojatnosti $p(D_t|q, not r)$. Danu procjenu u teoriji je moguče predprocesirati, no budući da bi predprocesiranih podataka bilo broj_dokumenata * broj_tokena, to je u praksi nemoguče napraviti. Problem bi se moglo riješiti tako da se skup dokumenata podijeli na dovoljno male podskupine unutar kojih bi se onda radilo rangiranje.
 
-TODO: Za svaku verziju napraviti opsezna testiranja.
+Problem kod algoritma je što ako je ulaz jedan token, procijenjene težine za svaki dokument su iste i onda je nemoguče napraviti kvalitetno rangiranje. To bi se moglo riješiti tako da se na težinu za pojedini token doda normalizirani broj njegovog pojavljivanja unutar dokumenta.
+
+TODO: analizirati formule i ostalo
 
 -------------------------- 
 Testno racunalo:

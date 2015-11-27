@@ -50,6 +50,8 @@ class IRAlgorithm:
         self.docs_no = len(self.documents)
         self.docs_bag = bag_of_documents(self.documents)
 
+        # only docs_no and docs_bag have to be updated
+
     @timeit
     def run(self, query, page=Page(0, 20)):
         '''
@@ -87,12 +89,14 @@ class IRAlgorithm:
                 if token_docs_len <= 0:
                     continue
                 ratio = 1.0 * token_docs_len / self.docs_no
-                if abs(ratio - 10e-6) < 0:
+                if abs(ratio - 10e-8) < 0:
                     continue
                 result += math.log(0.5 / ratio)
             if result > 0:
                 results.append((doc_key, result))
 
         results = sorted(results, key=lambda x: x[1], reverse=True)
+
+        # TODO: remove weight from result
 
         return results[page.start_index:page.end_index]

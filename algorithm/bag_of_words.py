@@ -8,8 +8,8 @@ contains more occurances of specific term.
 Each document is observed separately.
 
 The number of token occurrence in a document is
-normalized by document size. From my (buda) opinion
-the results are better.
+normalized by document size. From my opinion that gives
+the better results.
 '''
 
 import logging
@@ -43,6 +43,8 @@ class IRAlgorithm:
         self.documents = preprocess(raw_files)
         self.docs_bag = bag_of_documents(self.documents)
 
+        # TODO: only docs_bag has to be updated when new document is added
+
     @timeit
     def run(self, query, page=Page(0, 20)):
         '''
@@ -57,6 +59,13 @@ class IRAlgorithm:
         "Test one more time." is more relevant than document
         "Test one more time because something could went wrong.",
         because test has the bigger impact.
+
+        Args:
+            query: query string
+            page: page size and offset
+
+        Returns:
+            list of identifiers
         '''
         tokens = tokenize_text(query)
         if len(tokens) <= 0:
