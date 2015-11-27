@@ -20,6 +20,7 @@ import logging
 import readline  # NOQA
 import util.argument as arg
 from data_structure.page import Page
+from data_structure.document import text_hash
 from algorithm.algorithm_box import AlgorithmBox
 
 logging.basicConfig(level=logging.INFO)
@@ -39,9 +40,9 @@ if __name__ == '__main__':
     number_of_results = int(arg.get_argv('n', RESULTS))
 
     # load local files
-    # files_path = 'test-small'
+    files_path = 'test-small'
     # files_path = '20news-18828/alt.atheism'
-    files_path = '20news-18828'
+    # files_path = '20news-18828'
     logger.info('Loading files...')
     files = parser.parse(files_path, 'iso-8859-1')
     logger.info('Files from %s are loaded.' % files_path)
@@ -81,9 +82,9 @@ if __name__ == '__main__':
 
         if document is not '':
             # TODO: replace with UUID
-            document_hash = str(hash(document))
+            document_hash = text_hash(document)
             files[document_hash] = document
-            algorithm_box.files = files
+            algorithm_box.append(document)
             logger.info('New document: key = %s, content = %s' %
                         (document_hash, document))
             continue

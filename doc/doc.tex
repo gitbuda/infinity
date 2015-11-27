@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper,11pt]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage{fullpage} % Package to use full page
@@ -7,6 +7,7 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage[croatian]{babel}
+\usepackage[T1]{fontenc}
 
 % TODO: align, verbatim, equation blocks
 
@@ -20,7 +21,7 @@
 
 \maketitle
 
-\section{Predprocesiranje}
+\section{Pretprocesiranje}
 
 \section{Algoritmi}
 
@@ -30,17 +31,23 @@
 
 \subsection{Binary independence}
 
+\section{Implemntacija}
+
+Svaki algoritam tipa je \textit{IRAlgorithm}. Taj tip posjeduje četiri metode. \textit{config} putem koje se prima nekakva konfiguracija algoritma, ako takva za dani algoritam postoji. \textit{preprocess\_all} kroz koju se radi predprocesiranje svih dostupnih dokumenata. \textit{preprocess\_one} putem koje se radi predprocesiranje samo jednog novog dokumenta. I, \textit{run} koja vrača konkretne rezultate. Kako bi se izbjeglo pokretanje predprocesiranja svaki put kada se treba pokrenuti neki algoritam uveden je razred AlgorithmBox koji posjeduje instance svih dostupnih algoritama u varijabli \textit{available\_algorithms}. U varijabli \textit{prepared\_algorithms} nalaze se samo one instance algoritama za koje je već proveden proces predprocesiranja. Varijabla \textit{prepared\_algorithms} se prilikom svakog postavljanja novih dokumenata kroz \textit{setter files} postavi na prazni riječnik. Na taj način se postiže da se kod idučeg dohvačanja nekog algoritma ponovno forsira proces predprocesiranja. Ukoliko se dodao samo jedan dokument onda se samo pozove metoda \textit{preprocess\_one} nad svim algoritmima koji su unutar riječnika \textit{prepared\_algorithms}. Mana ovog pristupa je što svaki algoritam za sebe drži kopiju svih dokumenata i ponavljanje predprocesiranja za svaki algoritam posebno. Prednost je, svojstvo da svaki algoritam ima izolirani skup podataka s kojim može činiti što je već potrebno kako bi algoritam valjano radio. Odlučio sam se za taj pristup zato što je memorija manji problem od nekakve jednostavnosti korištenja i važnosti da je svaki algoritam za sebe izoliran. Jedna od mana trenutne implementacija je i što se dokumenti pamte unutar riječnika. Optimalnije bi bilo pamtiti dokumente unutar liste, te imati potporne strukture podataka kao što su riječnici u kojima bi se pamtilo primjerice na kojoj poziciji u listi je određeni dokument.
+
 \section{Upute za pokretanje}
 
 \url{https://infinity.buda.link}
 
 TODO: source setup.py
 
+TODO: objasniti konzolu (history)
+
 \section{Produkcijska okolina}
 
 Svi upiti klijenata dolaze na Nginx load balancer koji ima izrazito veliku propusnost. Nakon toga load banancer prosljedjuje upit na worker instance koje svaka za sebe imaju cijeli dataset i znaju vratiti odgovarajuci rezultat. Dataset worker instance preuzimaju od db interface instance, a ne direktno iz baze. Trenutno je u deploymentu samo jedna instanca sucelja prema bazi, ali u produkciji tu moze biti opet load balancer i vise instanci interface-a prema bazi podataka. Baza podataka je MongoDB, takodjer samo jedna instanca, no u praksi tu moze doci mongo replica set ili mongo shard cluster.
 
-Kao sto se vidi na grafu \ref{production_environment}, sve instance imaju simbolicka imena (FQDN). To je takodjer izrazito bitno jer se time postize transparentnost pristupa i migracijska transparentnost. U konkretnoj implementaciji sva imena su definirana u /etc/hosts file-u na deploy stroju, no u produkciji ce imene biti definirana na redundantnim DNS serverima.
+Kao sto se vidi na slici \ref{production_environment}, sve instance imaju simbolicka imena (FQDN). To je takodjer izrazito bitno jer se time postize transparentnost pristupa i migracijska transparentnost. U konkretnoj implementaciji sva imena su definirana u /etc/hosts file-u na deploy stroju, no u produkciji ce imene biti definirana na redundantnim DNS serverima.
 
 \begin{figure}[!htbp]
 \begin{center}
@@ -48,6 +55,12 @@ Kao sto se vidi na grafu \ref{production_environment}, sve instance imaju simbol
 \end{center}
 \caption{Produkcijska okolina}\label{production_environment}
 \end{figure}
+
+\section{Web sučelje}
+
+TODO: Angular + materializecss
+
+TODO: nekakva slika sučelja
 
 \vspace{1cm}
 P.S.

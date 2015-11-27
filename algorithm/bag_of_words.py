@@ -31,7 +31,7 @@ class IRAlgorithm:
         pass
 
     @timeit
-    def process(self, raw_files):
+    def preprocess_all(self, raw_files):
         '''
         Converts the raw files into the documents.
         For each document create tokens and bag of words.
@@ -43,7 +43,12 @@ class IRAlgorithm:
         self.documents = preprocess(raw_files)
         self.docs_bag = bag_of_documents(self.documents)
 
-        # TODO: only docs_bag has to be updated when new document is added
+    @timeit
+    def preprocess_one(self, raw_file):
+        '''
+        '''
+        print('bag')
+        pass
 
     @timeit
     def run(self, query, page=Page(0, 20)):

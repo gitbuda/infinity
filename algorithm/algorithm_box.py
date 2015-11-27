@@ -6,6 +6,7 @@ kind of preprocessing. The main purpose of
 this class is to control the preprocessing.
 '''
 
+from data_structure.document import text_hash
 from algorithm.bag_of_words import IRAlgorithm as BagOfWords
 from algorithm.vector_space import IRAlgorithm as VectorSpace
 from algorithm.binary_independence import IRAlgorithm as BinaryIndependence
@@ -34,6 +35,20 @@ class AlgorithmBox:
         # have to be reinitialized
         self.prepared_algorithms = {}
 
+    def append(self, raw_file):
+        '''
+        Add raw_file to the files and update all
+        prepared algorithms.
+
+        Args:
+            raw_file: file represented as string
+        '''
+        file_key = text_hash(raw_file)
+        self.files[file_key] = raw_file
+
+        for alg_name, algorithm in self.prepared_algorithms.items():
+            algorithm.preprocess_one(raw_file)
+
     def algorithm(self, algorithm_name):
         '''
         Returns instance of the algorithm specified by algorithm name.
@@ -52,7 +67,7 @@ class AlgorithmBox:
         if algorithm_name not in self.prepared_algorithms:
             algorithm = self.available_algorithms[algorithm_name]
             algorithm.configure()
-            algorithm.process(self.files)
+            algorithm.preprocess_all(self.files)
             self.prepared_algorithms[algorithm_name] = algorithm
 
         return self.prepared_algorithms[algorithm_name]

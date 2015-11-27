@@ -32,7 +32,7 @@ class IRAlgorithm:
         pass
 
     @timeit
-    def process(self, raw_files):
+    def preprocess_all(self, raw_files):
         '''
         Converts the raw files into the documents.
 
@@ -50,7 +50,12 @@ class IRAlgorithm:
         self.docs_no = len(self.documents)
         self.docs_bag = bag_of_documents(self.documents)
 
-        # only docs_no and docs_bag have to be updated
+    @timeit
+    def preprocess_one(self, raw_file):
+        '''
+        '''
+        print('binary')
+        pass
 
     @timeit
     def run(self, query, page=Page(0, 20)):

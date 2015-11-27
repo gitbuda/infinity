@@ -7,6 +7,8 @@ Each document has: text, unique identifer, content hash,
 list of tokens and bag of words (dict[token] = number of occurrences).
 '''
 
+import hashlib
+
 
 class Document(object):
 
@@ -16,6 +18,25 @@ class Document(object):
         self.content_hash = ""
         self.tokens = []
         self.bag = {}
+
+
+def text_hash(text):
+    '''
+    Returns hash from text. In the current implementation
+    hash algorithm is SHA1. Two reason for that exist:
+    1. for the same text hash has to be the same
+    2. for different texts hash have to be different
+       (with the SHA1 probability that 2 different texts will
+       have the same hash is really, REALLY small)
+       e.g GIT uses the same principle
+
+    Args:
+        text: string representing a document
+
+    Returns:
+        hash: SHA1 hash of text
+    '''
+    return hashlib.sha1(text.encode('utf-8')).hexdigest()
 
 
 def create_doc(identifier, text):
@@ -33,7 +54,7 @@ def create_doc(identifier, text):
 
     document.identifier = identifier
     document.text = text
-    document.content_hash = hash(text)
+    document.content_hash = text_hash(text)
 
     return document
 

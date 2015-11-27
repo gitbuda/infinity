@@ -33,9 +33,10 @@ class IRAlgorithm:
         self.distance = euclidean_distances
 
     @timeit
-    def process(self, raw_files):
+    def preprocess_all(self, raw_files):
         '''
-        Converts the raw files into the documents.
+        Converts the raw files into the documents and
+        execute preprocess algorithm on all of them.
 
         Calculates tf, idf, tf * idf.
 
@@ -49,6 +50,13 @@ class IRAlgorithm:
         self.determine_idf()
         self.determine_tf()
         self.tf_idf = self.tf.multiply(self.idf)
+
+    @timeit
+    def preprocess_one(self, raw_file):
+        '''
+        '''
+        print('space')
+        pass
 
     @timeit
     def run(self, query, page=Page(0, 20)):
