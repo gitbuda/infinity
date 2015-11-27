@@ -1,5 +1,6 @@
 \documentclass[a4paper,12pt]{article}
 
+\usepackage{cmap}
 \usepackage[utf8]{inputenc}
 \usepackage{fullpage}
 \usepackage{parskip}
@@ -8,11 +9,13 @@
 \usepackage{graphicx}
 \usepackage[croatian]{babel}
 \usepackage[T1]{fontenc}
+\usepackage{listings}
 
-% TODO: align, verbatim, equation blocks
+% TODO: align, verbatim blocks
 
 \renewcommand{\figurename}{Slika}
 \newcommand{\engl}[1]{(engl.~\emph{#1})}
+\lstset{basicstyle = \ttfamily,columns=fullflexible}
 
 \title{Rangirajući pretraživač dokumenata - Infinity}
 \author{Marko Budiselić}
@@ -21,6 +24,38 @@
 \begin{document}
 
 \maketitle
+
+\section{Zadatak}
+
+U sklopu zataka potrebno je implementirati rangirajući pretraživač dokumenata \engl{ranking search engine} prikladan za uporabu na news portalima sa sadržajem na engleskom jeziku.
+
+Pretraživač treba imati sljedeće odlike:
+\begin{itemize}
+\item mogućnost rada s velikim brojem dokumenata (> 1 milijun)
+\item rangiranje rezultata pretrage
+\item nisko vrijeme obrade upita (sposobnost rada pod velikim opterećenjem)
+\item optimalno korištenje računalnih resursa
+\item jednostavnost implementacije i korištenja
+\end{itemize}
+
+Sučelje sustava:
+\begin{itemize}
+\item pretraživač se inicijalizira dokumentima pohranjenim u proizvoljnom obliku
+\item u pretraživač se naknadno (tijekom rada) mogu dodavati dokumenti
+\item kao upit prihvaća slijed riječi
+\item kao odgovor vraća indekse dokumenata
+\end{itemize}
+
+Testni skup dokumenata:
+\begin{itemize}
+\item \url{http://qwone.com/~jason/20Newsgroups}
+\end{itemize}
+
+Testno računalo:
+\begin{itemize}
+\item RAM: 7880944 kB; 1600MHz
+\item CPU: Intel(R) Core(TM) i3-4010U CPU @ 1.70GHz
+\end{itemize}
 
 \section{Pretprocesiranje}
 
@@ -34,7 +69,25 @@ Dvije su osnovne strukture podatatak unutar algoritma. \textit{Bag of words} unu
 
 \subsection{Vector space}
 
+Temelj algoritma vektorskog prostora \engl{vector space} su izrazi:
+\begin{align}
+w_{ij} = TF(t_i , d_j) \cdot IDF(k_i , D) \\
+TF(t_i , d_j) = \frac{freq((t_i , d_j)}{max(freq(t, d_j) | t \in D)} \\
+IDF(k_i, D) = log\Big(\frac{|D|}{|\{d \in D | t_i \in D_j\}|}\Big)
+\end{align}
+Inicijalna implementacija vector space modela bila je iterativna. Dakle za svaki dokument pretprocesiranjem se odredio vektor $TF \cdot IDF$, a prilikom rangiranja, za svaki dokument se izračunala mjera udaljenosti. Takva implementacija, za dani skup dokumenata dala je rezultat za red veličine 10s, što je neprihvatljivo. Trenutna implementacija algoritma koristi množenje sparse matrice i vektora (po svakom retku) i takva implementacija daje rezultat u vremenu od reda valičine 10ms, što je puno prihvatljivije. Prilikom izgradnje matrica koristio se $lil$ tip matrice. Kada je postupak izgradnje završio $lil$ matrice su prebačene u $csr$ tip kako bi se što brže provelo množenje. Kao mjere udaljenosti razmatrane su euklidska i kosinusna udaljenost. Kosinusna udaljenost dala je vrijeme izvođenja upita $\sim$25ms, dok je euklidska udaljenost dala vrijeme izvođenja upita $\sim$40ms. Stoga je odabrana euklidska udaljenost.
+
 \subsection{Binary independence}
+
+Temelj algoritma binarne nezavisnoti je formuala:
+\begin{align}
+\sum_{t \in q} log \frac{p(D_t|q, r)}{p(D_t|q, \bar r)} = \sum_{t \in q} w_t
+\end{align}
+gdje se $p(D_t|q, r)$ procjenjuje na $0.5$, a $p(D_t|q, \bar r)$ na $n_t / N_d$, gdje je pak $n_t$ broj dokumenata u kojima se nalazi riječ $t$, a $N_d$ ukupan broj dokumenata.
+
+Implementacija složenost algoritma ovisi o broju dokumenata nad kojima se vrši rangiranje. Konkretno, za dani upit potrebno je obići sve dokumente kako bi se dobila procijenjena vjerojatnosti $p(D_t|q, \bar r)$. Danu procjenu u teoriji je moguče predprocesirati, no budući da bi predprocesiranih podataka bilo $(broj\_dokumenata \cdot broj\_tokena)$, to je u praksi nemoguče napraviti. Problem bi se moglo riješiti tako da se skup dokumenata podijeli na dovoljno male podskupine unutar kojih bi se onda radilo rangiranje.
+
+Problem kod algoritma je i da ako je ulaz jedan token, procijenjene težine za svaki dokument su iste i onda je nemoguče napraviti kvalitetno rangiranje. To bi se moglo riješiti tako da se na težinu za pojedini token doda normalizirani broj njegovog pojavljivanja unutar dokumenta.
 
 \section{Implemntacija}
 
@@ -42,11 +95,16 @@ Svaki algoritam tipa je \textit{IRAlgorithm}. Taj tip posjeduje četiri metode. 
 
 \section{Upute za pokretanje}
 
-\url{https://infinity.buda.link}
+Izvorni kod: \url{https://github.com/gitbuda/infinity.git}
 
-TODO: source setup.py
+\begin{lstlisting}[language=bash]
+$ git clone https://github.com/gitbuda/infinity.git
+$ cd infinity
+$ source setup.py
+$ python console.py
+\end{lstlisting}
 
-TODO: objasniti konzolu (history)
+Web sučelje: \url{https://infinity.buda.link}
 
 \section{Produkcijska okolina}
 
@@ -61,15 +119,26 @@ Kao sto se vidi na slici \ref{production_environment}, sve instance imaju simbol
 \caption{Produkcijska okolina}\label{production_environment}
 \end{figure}
 
+Prilikom testiranje opterečenja instanci radnika, u obzir su uzeta dva najpopularnija WSGI servera gunicorn i uWSGI, testiranje je provedeno s bag of words algoritmom, a rezultati su vidljivi u tablici ispod. Najbolje rezultate daje konfiguracija u kojoj je uWSGI iza Nginx-a u socket načinu rada.
+\vspace{0.3cm}
+\begin{center}
+    \begin{tabular}{ | p{5cm} | p{5cm} |}
+    \hline
+    konfiguracija & req/s \\ \hline
+	gunicorn & 1245,64 \\ \hline
+    uWSGI & 1767,23 \\ \hline
+    Nginx + uWSGI & 1767,23 \\ \hline
+    \end{tabular}
+\end{center}
+
 \section{Web sučelje}
 
 TODO: Angular + materializecss
 
 TODO: nekakva slika sučelja
 
-\vspace{1cm}
-P.S.
-\\[0.3cm]
+\section{PS}
+
 infinity $>$ gugol
 
 \bibliographystyle{plain}

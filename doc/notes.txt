@@ -6,19 +6,6 @@ Veličina problema:
 - broj elemenata u sparse matrici = 2648308
 - gustoca sparce matrice tf * idf = 0,00103068
 
-Prilikom dodavanja elementa, u trenutnoj verziji, svaki algoritam provodi postupak predprocesiranja iz početka. To bi se trebalo optimizirati tako da se ažuriraju samo one vrijednosti koje su stvarno potrebne da se ažuriraju. TODO
-
-Inicijalna implementacija vector space modela bila je iterativna. Dakle za svaki dokument pretprocesiranjem se odredio vektor TF * IDF, a prilikom rangiranja, za svaki dokument se izračunala mjera udaljenosti. Takva implementaija, za dani dataset dala je rezultat za red veličine 10s, što je neprihvatljivo. Trenutna implementacija algoritma koristi množenje sparse matrice i vektora (po svakom retku) i takva implementacija daje rezultat u vremenu od reda valičine 10ms, što je puno prihvatljivije.
-
-Kao mjere udaljenosti razmatrane su euklidska i kosinusna udaljenost. Kosinusna udaljenost dala je vrijeme izvođenja upita ~25ms, dok je euklidska udaljenost dala vrijeme izvođenja upita ~40ms. Stoga je odabrana euklidska udaljenost.
-
-3. Binomial independence.
-Implementacija složenost algoritma ovisi o broju dokumenata nad kojima se vrši rangiranje. Konkretno, za dani upit potrebno je obići sve dokumente kako bi se dobila procijenjena vjerojatnosti $p(D_t|q, not r)$. Danu procjenu u teoriji je moguče predprocesirati, no budući da bi predprocesiranih podataka bilo broj_dokumenata * broj_tokena, to je u praksi nemoguče napraviti. Problem bi se moglo riješiti tako da se skup dokumenata podijeli na dovoljno male podskupine unutar kojih bi se onda radilo rangiranje.
-
-Problem kod algoritma je što ako je ulaz jedan token, procijenjene težine za svaki dokument su iste i onda je nemoguče napraviti kvalitetno rangiranje. To bi se moglo riješiti tako da se na težinu za pojedini token doda normalizirani broj njegovog pojavljivanja unutar dokumenta.
-
-TODO: analizirati formule i ostalo
-
 -------------------------- 
 Testno racunalo:
 RAM: 7880944 kB; 1600MHz
