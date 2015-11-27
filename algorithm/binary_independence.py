@@ -18,7 +18,7 @@ from util.timeit import timeit
 from data_structure.page import Page
 from preprocess.bager import bag_of_documents
 from preprocess.tokenizer import tokenize_text
-from preprocess.preprocessor import preprocess
+from preprocess.preprocessor import preprocess_all
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ class IRAlgorithm:
             raw_files: dict (key = document key, value = document text)
         '''
         logger.info("Preprocessing...")
-        self.documents = preprocess(raw_files)
+        self.documents = preprocess_all(raw_files)
         self.docs_no = len(self.documents)
         self.docs_bag = bag_of_documents(self.documents)
 

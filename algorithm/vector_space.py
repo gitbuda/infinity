@@ -14,7 +14,7 @@ from scipy.sparse import lil_matrix
 from scipy.sparse import csr_matrix
 from data_structure.page import Page
 from preprocess.tokenizer import tokenize_text
-from preprocess.preprocessor import preprocess
+from preprocess.preprocessor import preprocess_all
 from sklearn.metrics.pairwise import euclidean_distances
 
 logger = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ class IRAlgorithm:
             raw_files: dict[identifier] = text
         '''
         logger.info("Preprocessing...")
-        self.documents = preprocess(raw_files)
+        self.documents = preprocess_all(raw_files)
         self.docs_no = len(self.documents)
 
         self.determine_idf()

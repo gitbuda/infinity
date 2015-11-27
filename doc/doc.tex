@@ -1,8 +1,8 @@
-\documentclass[a4paper,11pt]{article}
+\documentclass[a4paper,12pt]{article}
 
 \usepackage[utf8]{inputenc}
-\usepackage{fullpage} % Package to use full page
-\usepackage{parskip} % Package to tweak paragraph skipping
+\usepackage{fullpage}
+\usepackage{parskip}
 \usepackage{amsmath}
 \usepackage{hyperref}
 \usepackage{graphicx}
@@ -12,6 +12,7 @@
 % TODO: align, verbatim, equation blocks
 
 \renewcommand{\figurename}{Slika}
+\newcommand{\engl}[1]{(engl.~\emph{#1})}
 
 \title{Rangirajući pretraživač dokumenata - Infinity}
 \author{Marko Budiselić}
@@ -23,9 +24,13 @@
 
 \section{Pretprocesiranje}
 
+Bitan segment analize teksa je predprocesiranje. Predprocesiranje počinje s podjelom dokumenta na riječi \engl{tokenization}. Implementiran je jednostavni tokenizator koji prvo zamijenjuje posebna znakove s prazninama, nakon toga odbacuje riječi duže od 25 znakova (25 je nastao subjektivnom procjenom) i na kraju se radi svođenje riječi na jednostavniji oblik \engl{stemming}. Korišten je Snowball (Porter2) stemmer zato što je manje agresivan od Lancaster stemmer-a, a brži od Porter stemmer-a. Uvođenjem stemmer-a naraslo je vrijeme izvođenja pretprocesiranja i to za $\sim$4 puta (koristi se stemming Python modul). Trebalo bi koristiti neku brzu C/C++ implementaciju stemming postupka. Nije se koristio lematizator zato što je bitno očuvati riječi što je moguče više onakve kakve jesu. Primjerice, ne bi bilo dobro zamijeniti \textit{is} s \textit{be}, jer je korisnik možda baš htio dokumente gdje se pojavljuje \textit{is}. Lematizator bi \textit{is} riječ zamijenio s riječi \textit{be} i tu bi se izbugila informacija (opet subjektivna procjena). Kada bi postojala potreba za lematizatorom tada bi se uz Python koristio spacy lematizator i to zato što je brži u odnosu na, primjerice, nltk lematizatora. 
+
 \section{Algoritmi}
 
 \subsection{Bag of words}
+
+Dvije su osnovne strukture podatatak unutar algoritma. \textit{Bag of words} unutar svakog dokumenta broji koliko se puta pojedina riječ pojavila unutar tog dokumenta. \textit{Bag of documents} za svaku riječ broji koliko se puta pojavila u pojedinom dokumentu. Stvari su slične, ali omogučuju da se algoritam izvede u složenosti \textit{(broj riječi upita} * \textit{broj dokumenata u kojima se pojavljuje riječ)}. Pristigli upit najprije se pretprocesira, potom se za svaku riječ i za svaki dokument unutar kojeg se ta riječ pojavljuje računa normalizirana težina. Za svaku riječ  gleda se koliko puta se ona pojavljuje unutar dokumenta i onda se ta vrijednost normalizira s veličinom dokumenta. Na taj način se postiže da kraći dokumenti u kojima broj pojavljivanje pojedine riječi čini veći postotak unutar dokumenta imaju snažniji utjecaj nego dokumenti u kojima se rijeđe pojavljuje dotična riječ. Na kraju se sortiraju dobiveni dokumenti prema izračunatim težinama. Dobre strane algoritma su brzina, jednostavnost, normalizacija, a mana je što se ne uzima nikakva globalna informacija o zastupljenosti riječi unutar cijelog skupa dokumenata. Uvijet koji bi trebao biti zadovoljen je da ne postoji dokument unutar kojeg se nalaze sve riječi iz korpusa. U suprotnom će algoritam sporije raditi od očekivanog, ali pretpostavka je da se to neće dogoditi. Na danom skupu dokumenata, vrijeme izvođenja algoritma je rada veličine 1ms i ne bi trebalo postati drastično veće na skupu od, primjerice, reda veličine 1M dokumenata.
 
 \subsection{Vector space}
 

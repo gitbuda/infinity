@@ -17,7 +17,8 @@ from util.timeit import timeit
 from data_structure.page import Page
 from preprocess.bager import bag_of_documents
 from preprocess.tokenizer import tokenize_text
-from preprocess.preprocessor import preprocess
+from preprocess.preprocessor import preprocess_one
+from preprocess.preprocessor import preprocess_all
 
 logger = logging.getLogger(__name__)
 
@@ -40,15 +41,30 @@ class IRAlgorithm:
             raw_files: dictionary[document_key] = document_content
         '''
         logger.info("Preprocessing...")
-        self.documents = preprocess(raw_files)
+        self.documents = preprocess_all(raw_files)
         self.docs_bag = bag_of_documents(self.documents)
 
     @timeit
     def preprocess_one(self, raw_file):
         '''
+        Takes only single document (raw_file)
+        and calculates all neccessary to incorporate
+        that document into the existing set of documents.
+
+        Args:
+            raw_file: text (string)
         '''
-        print('bag')
-        pass
+        # create document
+        document = preprocess_one(raw_file)
+
+        # update docs_bag dict
+        for token, occurrences in document.bag.items():
+            docs_number = self.docs_bag.get(token, {})
+            docs_number[document.identifier] = occurrences
+            self.docs_bag[token] = docs_number
+
+        # add the document to the documents set
+        self.documents[document.identifier] = document
 
     @timeit
     def run(self, query, page=Page(0, 20)):

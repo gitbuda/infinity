@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
     # defaults
     QUERY = 'test case'
-    ALGORITHM = 'vector_space'
+    ALGORITHM = 'bag_of_words'
     RESULTS = 20
     DOCUMENT = ''
 
@@ -89,11 +89,12 @@ if __name__ == '__main__':
                         (document_hash, document))
             continue
 
-        # execute algorithm
+        # try to execute the algorithm
         try:
             page = Page(0, number)
             algorithm = algorithm_box.algorithm(algorithm_name)
             rank = algorithm.run(query, page)
             logger.info("Result: %s" % rank)
         except Exception as e:
-            logger.info(str(e))
+            import traceback
+            traceback.print_exc()

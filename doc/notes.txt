@@ -1,19 +1,3 @@
-Predprocesiranje:
-tokenizacija -> dijeljenje rečenica na riječi:
-  1. izbacivanje specijalnih znakova (zamjena sa prazninama)
-  2. odbacivanje riječi koje su duže od 25 znakova
-  3. stemming
-    Korišten je Snowball (Porter2) stemmer zato što je manje agresivan od Lancaster stemmer-a, a brži od Porter stemmera. Uvođenjem stemmer-a naraslo je vrijeme izvođenja pretprocesiranja i to za ~4 puta (koristi se stemming python modul). Trebalo bi koristiti neku brzu c/c++ implementaciju stemming postupka.
-
-Nije se koristio lematizator zato što mislim da je bitno očuvati riječi što je moguče više onakve kakve jesu. Primjerice, ne bi bilo dobro zamijeniti is sa be, jer je korisnik možda baš htio dokumente gdje se pojavljuje is. Lematizator bi is token zamijenio s be tokenom i tu bi se izbugila informacija. Kada bi postojala potreba za lematizatorom tada bi se uz python koristio spacy lematizator i to zato što je brži od nltk stemmer-a. 
--------------------------- 
-Algoritmi:
-
-1. Bag of words. Normalizirana verzija. Broje se pojavljivanja svakog tokena unutar nekog dokumenta. Za svaki token gleda se koliko puta se on pojavio unutar dokumenta i onda se ta vrijednost normalizira s velicinom dokumenta. Na taj način se postiže da kraći dokumenti u kojima broj pojavljivanje čini veći postotak unutar dokumenta imaju snažniji utjecaj nego dokumenti u kojima se više puta pojavljuje dotični token.
-
-DOBRO: brzina, jednostavnost, normalizacija
-LOSE: ne uzima nikakvu globalnu informaciju
-
 2. Vector space algorithm
 
 Veličina problema:
@@ -128,7 +112,7 @@ Dependency management:
 Cijeli projekt je trentno unutar jednog foldera. To bi se trebalo razložiti na više modula. TODO:  .
 --------------------------
 Osvrt na implementaciju sa stajališta programskog inženjera
-Svaki algoritam je tipa IRAlgorithm koji posjeduje tri metode. config putem koje se prima nekakva konfiguracija algoritma, ako takva za dani algoritam postoji. process kroz koju se radi predprocesiranje podataka. run koja vrača konkretne rezultate. Kako bi se izbjeglo pokretanje predprocesiranja svaki put kada se treba pokrenuti algoritam uveden je razred AlgorithmBox koji posjeduje instance svih dostupnih algoritama u varijabli available_algorithms. U varijabli prepared_algorithms nalaze se samo one instance algoritama za koje je već proveden proces predprocesiranja. Varijabla prepared_algorithms se prilikom svakog postavljanja dokumenata kroz setter files postavi na prazni dictionary. Na taj način se postiže da se kod idučeg dohvačanja nekog algoritma ponovno forsira proces predprocesiranja. Mana ovog pristupa je što svaki algoritam za sebe drži kopiju svih dokumenata i ponavljanje predprocesiranja za svaki algoritam posebno. Prednost je, po mojem mišljenju, svojstvo da svaki algoritam ima izolirani skup podataka s kojim može činiti što je već potrebno kako bi algoritam valjano radio. Odlučio sam se za taj pristup zato što je memorija manji problem od nekakve jednostavnosti korištenja i važnosti da je svaki algoritam za sebe izoliran. 
+ 
 --------------------------
 Deployment okolina:
 Svi upiti klijenata dolaze na Nginx load balancer koji ima izrazito veliku propusnost. Nakon toga load banancer prosljedjuje upit na worker instance koje svaka za sebe imaju cijeli dataset i znaju vratiti odgovarajuci rezultat. Dataset worker instance preuzimaju od db interface instance, a ne direktno iz baze. Trenutno je u deploymentu samo jedna instanca sucelja prema bazi, ali u produkciji tu moze biti opet load balancer i vise instanci interface-a prema bazi podataka. Baza podataka je MongoDB, takodjer samo jedna instanca, no u praksi tu moze doci mongo replica set ili mongo shard cluster.

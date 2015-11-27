@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-Creates bag of words (for each document dictionary of
+Creates bag of words (for each document that dictionary of
 tokens occurrence) and bag of documents (for each token
 number of documents that contains the term).
 '''
