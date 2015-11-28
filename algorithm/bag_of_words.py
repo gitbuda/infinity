@@ -47,7 +47,7 @@ class IRAlgorithm:
     @timeit
     def preprocess_one(self, raw_file):
         '''
-        Takes only single document (raw_file)
+        Takes single document (raw_file)
         and calculates all neccessary to incorporate
         that document into the existing set of documents.
 

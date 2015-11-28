@@ -30,7 +30,8 @@ if __name__ == '__main__':
 
     # defaults
     QUERY = 'test case'
-    ALGORITHM = 'bag_of_words'
+    # ALGORITHM = 'bag_of_words'
+    ALGORITHM = 'binary_independence'
     RESULTS = 20
     DOCUMENT = ''
 
