@@ -18,6 +18,8 @@
   ],
   "dependencies": {
     "Materialize": "materialize#~0.97.3",
-    "angular": "~1.4.8"
+    "angular": "~1.4.8",
+    "angular-route": "~1.4.8",
+    "angular-loading-bar": "~0.8.0"
   }
 }
