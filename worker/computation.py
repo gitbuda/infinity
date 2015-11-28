@@ -7,6 +7,7 @@ Computational instance.
 import json
 import falcon
 import parser
+import requests
 from common.falcon.middleware.max_body import max_body
 from common.falcon.middleware.require_json import RequireJSON
 from common.falcon.middleware.json_translator import JSONTranslator
@@ -20,10 +21,17 @@ class QueryResource:
 
     def __init__(self):
         print("Document Resource init start")
-        files = parser.parse('../20news-18828', 'iso-8859-1')
+        r = requests.get('http://idb.infinity.buda.link:9001/api/data/documents/all')
+        documents = {}
+        for document in json.loads(r.text):
+            identifier = document['identifier']
+            print(identifier)
+            text = document['content']
+            documents[identifier] = text
+        print("all documents are fetched")
         self.algorithm = BagOfWords()
         self.algorithm.configure()
-        self.algorithm.process(files)
+        self.algorithm.preprocess_all(documents)
         print("Document Resource init end")
 
     def on_get(self, req, resp):

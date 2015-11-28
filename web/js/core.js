@@ -76,7 +76,7 @@ app.controller('queryController', function($q, $scope, $location, $http, remoteD
       var allData = [];
       var promieses = [];
       data.forEach(function(entry) {
-        promieses.push($http.get("/api/document/" + entry));
+        promieses.push($http.get("/api/data/document/" + entry));
       });
       $q.all(promieses).then(function(response) {
         for (var i = 0; i < response.length; i++) {
@@ -107,7 +107,7 @@ app.controller('listController', function($q, $scope, $http, remoteData, pageDat
       var allData = [];
       var promieses = [];
       data.forEach(function(entry) {
-        promieses.push($http.get("/api/document/" + entry));
+        promieses.push($http.get("/api/data/document/" + entry));
       });
       $q.all(promieses).then(function(response) {
         for (var i = 0; i < response.length; i++) {
