@@ -30,8 +30,9 @@ if __name__ == '__main__':
 
     # defaults
     QUERY = 'test case'
-    # ALGORITHM = 'bag_of_words'
-    ALGORITHM = 'binary_independence'
+    ALGORITHM = 'bag_of_words'
+    # ALGORITHM = 'vector_space'
+    # ALGORITHM = 'binary_independence'
     RESULTS = 20
     DOCUMENT = ''
 
@@ -41,8 +42,8 @@ if __name__ == '__main__':
     number_of_results = int(arg.get_argv('n', RESULTS))
 
     # load local files
-    files_path = 'test-small'
-    # files_path = '20news-18828/alt.atheism'
+    # files_path = 'test-small/subset'
+    files_path = '20news-18828/alt.atheism'
     # files_path = '20news-18828'
     logger.info('Loading files...')
     files = parser.parse(files_path, 'iso-8859-1')
@@ -56,15 +57,20 @@ if __name__ == '__main__':
     page = Page(0, number_of_results)
     algorithm = algorithm_box.algorithm(algorithm_name)
     rank = algorithm.run(query, page)
+    print()
     logger.info("Result: %s" % rank)
+    print()
 
+    print()
     print('---- MANUAL ----------')
-    print('-q "query"')
+    print('-q "query" DEFAULT: "test case"')
     print('-a "algorithm" -> bag_of_words, vector_space, binary_independence')
-    print('-n "number of results" -> 20')
-    print('-d "new document"')
+    print('                  DEFAULT: bag_of_words')
+    print('-n "number of results" DEFAULT: 20')
+    print('-d "new document" DEFAULT: ""')
     print('-e exit')
     print('----------------------')
+    print()
 
     # if -d exists its priority is the higest one
     # so if -d exists the new document will be added
@@ -95,7 +101,9 @@ if __name__ == '__main__':
             page = Page(0, number)
             algorithm = algorithm_box.algorithm(algorithm_name)
             rank = algorithm.run(query, page)
+            print()
             logger.info("Result: %s" % rank)
+            print()
         except Exception as e:
             import traceback
             traceback.print_exc()

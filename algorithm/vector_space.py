@@ -14,6 +14,7 @@ from scipy.sparse import lil_matrix
 from scipy.sparse import csr_matrix
 from data_structure.page import Page
 from preprocess.tokenizer import tokenize_text
+from preprocess.preprocessor import preprocess_one
 from preprocess.preprocessor import preprocess_all
 from sklearn.metrics.pairwise import euclidean_distances
 
@@ -54,9 +55,53 @@ class IRAlgorithm:
     @timeit
     def preprocess_one(self, raw_file):
         '''
+        Takes single document (raw_file)
+        and calculates all neccessary to incorporate
+        that document into the existing set of documents.
+
+        Args:
+            raw_file: text (string)
         '''
-        print('space')
-        pass
+        logger.info("Preprocessing one...")
+
+        # create document
+        document = preprocess_one(raw_file)
+        if document.identifier in self.documents:
+            logger.info("Document already exists.")
+            return
+
+        # update documents
+        self.documents[document.identifier] = document
+        self.docs_no = len(self.documents)
+        self.iterative_docs.append(document.identifier)
+
+        # update tokens
+        for token, occurrence in document.bag.items():
+            if token not in self.tokens:
+                self.tokens[token] = self.tokens_no
+                self.tokens_no += 1
+
+        # resize matrices
+        tf_lil = resize_to_lil(self.tf, (self.docs_no, self.tokens_no))
+        idf_lil = resize_to_lil(self.idf, (1, self.tokens_no))
+
+        # update tf
+        max_freq = document.bag[max(document.bag, key=document.bag.get)]
+        for token, freq in document.bag.items():
+            token_index = self.tokens[token]
+            doc_index = self.docs_no - 1
+            tf_lil[doc_index, token_index] = tf(freq, max_freq)
+
+        # update idf
+        for token in document.bag:
+            index = self.tokens[token]
+            idf_lil[0, index] += 1
+
+        self.tf = tf_lil.tocsr()
+        self.idf = idf_lil.tocsr()
+
+        # TODO: multiply only last row
+        self.tf_idf = self.tf.multiply(self.idf)
 
     @timeit
     def run(self, query, page=Page(0, 20)):
@@ -95,7 +140,7 @@ class IRAlgorithm:
         # calculate distances between all documents and query
         distances = self.distance(self.tf_idf, query_w)
 
-        # sort results and return specified page of results
+        # sort results and return specified page
         distances = distances[:, 0]
         sorted_indices = np.argsort(distances)
         top = sorted_indices[page.start_index:page.end_index]
@@ -162,3 +207,33 @@ class IRAlgorithm:
                 self.tf[doc_index, token_index] = tf(bag[token], max_freq)
 
         self.tf = self.tf.tocsr()
+
+    def print_tf_idf(self):
+        '''
+        Debug method
+        '''
+        print('----------------')
+        print('TF: ', self.tf.toarray())
+        print('IDF: ', self.idf.toarray())
+        print('TF IDF: ', self.tf_idf.toarray())
+        print('----------------')
+
+
+def resize_to_lil(matrix, shape):
+    '''
+    Resize sparse matrix by converting it
+    to DOK and then convert it LIL.
+
+    Not very optimal, but scipy doesn't have
+    csr_matrix reshap implemented.
+
+    Args:
+        matrix: sparse matrix
+        shape: new matrix shape
+
+    Returns:
+        reshaped lil_matrix
+    '''
+    tf_dok = matrix.todok()
+    tf_dok.resize(shape)
+    return tf_dok.tolil()

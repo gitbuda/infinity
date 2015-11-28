@@ -54,6 +54,8 @@ class IRAlgorithm:
         Args:
             raw_file: text (string)
         '''
+        logger.info("Preprocessing one...")
+
         # create document
         document = preprocess_one(raw_file)
 
