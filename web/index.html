@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="infinity">
 
   <head>
     <!--Import Google Icon Font-->
@@ -16,44 +16,15 @@
 
   <body>
 
-    <div class="container top-padding">
-      <!-- title -->
-      <div class="row">
-        <div class="valign-wrapper">
-          <h1 class="margin-zero">Infinity</h1>
-        </div>
-      </div>
-      <!-- query field -->
-      <div class="row top-padding">
-        <div class="section">
-          <div class="valign-wrapper">
-            <div class="valign center-block col s12 m6 s4" style="margin: 0 auto;">
-              <div class="row">
-                <div class="input-field">
-                  <input id="query" type="text">
-                  <label for="query">Query</label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- rank button -->
-      <div class="row">
-        <div class="col s12 m12 l12">
-          <div class="section">
-            <div class="custom-center">
-              <button class="btn waves-effect waves-light blue" type="submit" name="action">Rank<i class="material-icons right">play_arrow</i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div ng-view></div>
 
     <!--Import jQuery before materialize.js-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="bower_components/Materialize/dist/js/materialize.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular-route/angular-route.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular-loading-bar/src/loading-bar.js"></script>
+    <script src="js/core.js"></script>
 
   </body>
 
