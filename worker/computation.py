@@ -23,7 +23,7 @@ class QueryResource:
     def __init__(self):
         '''
         Fetch all documents from the database and initialize
-        the ranking algorithm (bag of words)
+        the algorithm for ranking (bag of words)
         '''
         print("Document Resource init start")
         r = requests.get('http://idb.infinity.buda.link:9001/api/data/documents/all')
@@ -42,7 +42,7 @@ class QueryResource:
     @falcon.before(max_body(64 * 1024))
     def on_post(self, req, resp):
         '''
-        Returns documents ranked by search query within request body.
+        Returns documents ranked by search query within the request body.
 
         Args:
             req.params['pagenum'] = page number

@@ -23,7 +23,7 @@ def preprocess_all(raw_files):
         1. create document objects
         2. tokenize
         3. remove empty documents
-        4. create bad of words
+        4. create bag of words
 
     Args:
         raw_files: dict[identifier] = text
@@ -42,7 +42,7 @@ def preprocess_one(raw_file):
     '''
     Procedure:
         1. create document
-        2. fulfill with the data
+        2. fill with the data
 
     Args:
         raw_file: text (string)

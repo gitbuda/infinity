@@ -4,6 +4,10 @@
 Information Retrieval Algorithm: Vector Space
 
 TF * IDF implementation.
+
+Documentation:
+    FER Text Analysis and Information Retrieval (TAR)
+    year: 2013/2014 slides: TAR-03-IR.pdf
 '''
 
 import logging
@@ -27,9 +31,8 @@ class IRAlgorithm:
 
     def configure(self, config=None):
         '''
-        The main config is which distance function to use.
-
-        Default is euclidean because it is faster.
+        Default is the euclidean because it is faster than
+        the cosine distance.
         '''
         self.distance = euclidean_distances
 
@@ -37,7 +40,7 @@ class IRAlgorithm:
     def preprocess_all(self, raw_files):
         '''
         Converts the raw files into the documents and
-        execute preprocess algorithm on all of them.
+        executes preprocess algorithm on all of them.
 
         Calculates tf, idf, tf * idf.
 
@@ -162,14 +165,11 @@ class IRAlgorithm:
         idf_i = log(---------------------------)
                     |{d elem D | t_i elem D_j}|
 
-        This metdod also calculates tokens dict, tokens number
+        This method also calculates tokens dict, tokens number
         and iterative_docs (list of all document identifiers).
-        TODO: move that calculation outside or replace the
-        documents ditc with the list.
 
         Returns:
-            nothing but self.idf is recalculated one column
-            csr_matrix
+            nothing but self.idf is recalculated
         '''
         self.tokens = {}
         self.tokens_no = 0
@@ -198,7 +198,7 @@ class IRAlgorithm:
                         max(freq(k, d_j) | k elem D_j)
 
         Returns:
-            nothing but self.tf is recalculated csr_matrix
+            nothing but self.tf is recalculated
         '''
         self.tf = lil_matrix((self.docs_no, self.tokens_no))
 
@@ -225,8 +225,8 @@ class IRAlgorithm:
 
 def resize_tf(matrix, new_shape):
     '''
-    Take matrix and append rows and columns
-    to fit the new shape. Fill out with zeros.
+    Takes matrix and appends rows and columns
+    to fit the new shape. Fills out with zeros.
 
     Args:
         matrix: csr matrix
@@ -248,7 +248,7 @@ def resize_tf(matrix, new_shape):
 
 def resize_idf(matrix, new_shape):
     '''
-    Take matrix and append cols to fit the new shape.
+    Takes matrix and appends cols to fit the new shape.
 
     Args:
         matrix: csr matrix
@@ -269,10 +269,10 @@ def resize_idf(matrix, new_shape):
 def resize_to_lil(matrix, shape):
     '''
     Resize sparse matrix by converting it
-    to DOK and then convert it LIL.
+    to DOK and then converts it into LIL.
 
     Not very optimal, but scipy doesn't have
-    csr_matrix reshap implemented.
+    csr_matrix reshape implemented.
 
     Args:
         matrix: sparse matrix

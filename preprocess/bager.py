@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
 '''
-Creates bag of words (for each document that dictionary of
-tokens occurrence) and bag of documents (for each token
+Creates a bag of words (for each document dictionary of
+tokens occurrence) and a bag of documents (for each token
 number of documents that contains the term).
 '''
 
 
 def bag(tokens):
     '''
-    Calculate single bag of word for the list of tokens.
+    Calculates single bag of words for the list of tokens.
 
     Args:
         tokens: list of tokens
@@ -25,7 +25,7 @@ def bag(tokens):
 
 def bag_of_words(documents):
     '''
-    For each document calculate the bag of words.
+    For each document calculates the bag of words.
 
     Args:
         documents: dictionary[doc_key] = Document
@@ -41,7 +41,7 @@ def bag_of_words(documents):
 
 def bag_of_documents(documents):
     '''
-    For each term/token calculate the bag of documents.
+    For each term/token calculates the bag of documents.
     Equivalent to the bag of words.
 
     Args:

@@ -23,15 +23,15 @@ class Document(object):
 def text_hash(text):
     '''
     Returns hash from text. In the current implementation
-    hash algorithm is SHA1. Two reason for that exist:
+    hash algorithm is SHA1. Two reasons for that exist:
     1. for the same text hash has to be the same
-    2. for different texts hash have to be different
-       (with the SHA1 probability that 2 different texts will
+    2. for different texts hashes have to be different
+       (with the SHA1 algorithm probability that 2 different texts will
        have the same hash is really, REALLY small)
        e.g GIT uses the same principle
 
     Args:
-        text: string representing a document
+        text: string represents a document
 
     Returns:
         hash: SHA1 hash of text
@@ -61,7 +61,7 @@ def create_doc(identifier, text):
 
 def create_docs_from_files(files):
     '''
-    Create dictionary of documents.
+    Creates dictionary of documents.
 
     Args:
         files: dict[file_path] = text

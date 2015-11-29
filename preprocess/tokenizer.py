@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-Tokanize text. Remove special characters: [><!@#$%^&*?_~-£():.,"`]
+Tokenize text. Remove special characters: [><!@#$%^&*?_~-£():.,"`]
 
 Stemmer used for this task is Snowball (Porter2) stemmer, because it
 is less aggressive than Lancaster stemmer and faster than
@@ -44,9 +44,9 @@ def tokenize_text(text):
 
 def tokenize_documents(documents):
     '''
-    For each document create list of tokens.
-    For each document define order number (index).
-    Remove documents with empty list of tokens.
+    For each document creates list of tokens.
+    For each document defines order number (index).
+    Deletes documents that have empty list of tokens.
 
     Args:
         documents: dict of documents

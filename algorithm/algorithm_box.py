@@ -54,7 +54,7 @@ class AlgorithmBox:
         Returns instance of the algorithm specified by algorithm name.
 
         If algorithm is not initialized this method will run
-        initialization. If data (files) are not change meanwhile
+        initialization. If files are not changed
         the next call of this method will not reinitialize the algorithm.
 
         Args:

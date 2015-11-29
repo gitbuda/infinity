@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 '''
-Information Retrieval Algorithm: Binary Indepentence
+Information Retrieval Algorithm: Binary Independence
 
 The problem with this model is that e.g. for only one term,
-let say "test" all documents with "test" term inside have
-the same wight sum.
+let's say "test" all documents with "test" term inside have
+the same weight sum.
 
 Documentation:
     FER Text Analysis and Information Retrieval (TAR)
@@ -38,10 +38,10 @@ class IRAlgorithm:
         Converts the raw files into the documents.
 
         Procedure:
-            1. create documents
-            2. get documents number
-            3. for each term determine all documnets in which
-               that term exists and how many time it occurs (docs_bag)
+            1. creates documents
+            2. gets number of documents
+            3. for each term determine all documents in which
+               that term exists and how many times it occurs (docs_bag)
 
         Args:
             raw_files: dict (key = document key, value = document text)
@@ -55,7 +55,7 @@ class IRAlgorithm:
     def preprocess_one(self, raw_file):
         '''
         Takes single document (raw_file)
-        and calculates all neccessary to incorporate
+        and calculates all that is neccessary to incorporate
         that document into the existing set of documents.
 
         Args:
@@ -95,7 +95,7 @@ class IRAlgorithm:
 
         Args:
             query: query string
-            paga: used defined page
+            page: used defined page
         '''
         tokens = tokenize_text(query)
         if len(tokens) <= 0:

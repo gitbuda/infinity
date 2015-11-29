@@ -9,7 +9,7 @@ Each document is observed separately.
 
 The number of token occurrence in a document is
 normalized by document size. From my opinion that gives
-the better results.
+better results.
 '''
 
 import logging
@@ -35,7 +35,7 @@ class IRAlgorithm:
     def preprocess_all(self, raw_files):
         '''
         Converts the raw files into the documents.
-        For each document create tokens and bag of words.
+        For each document creates tokens and bag of words.
 
         Args:
             raw_files: dictionary[document_key] = document_content
@@ -48,7 +48,7 @@ class IRAlgorithm:
     def preprocess_one(self, raw_file):
         '''
         Takes single document (raw_file)
-        and calculates all neccessary to incorporate
+        and calculates all that is neccessary to incorporate
         that document into the existing set of documents.
 
         Args:
@@ -78,10 +78,10 @@ class IRAlgorithm:
             3. sum all normalized scores
 
         Why normalization:
-        E.g. let say that the query is "test" the document
+        E.g. let's say that the query is "test" the document
         "Test one more time." is more relevant than document
         "Test one more time because something could went wrong.",
-        because test has the bigger impact.
+        because test has bigger impact.
 
         Args:
             query: query string

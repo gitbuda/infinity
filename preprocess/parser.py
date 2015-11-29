@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 def parse(folder_path, encoding):
     '''
     Each file under folder_path will be stored inside the
-    dictionary as string. The key is relative file path
+    dictionary as a string. The key is relative file path
     and the value is file content.
 
     Args:

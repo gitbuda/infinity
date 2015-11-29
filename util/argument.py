@@ -2,7 +2,7 @@
 
 '''
 Arguments utility. The main purpose of these methods
-is to return value for some argument.
+is to return value for an argument.
 '''
 
 import sys
@@ -10,7 +10,7 @@ import sys
 
 def get_argv(name, default=None):
     '''
-    Get argument from sys.argv
+    Gets argument from sys.argv
 
     Args:
         name: argument name
@@ -28,7 +28,7 @@ def get_argv(name, default=None):
 
 def get_cl(cl, name, default=None):
     '''
-    Get argument from generic command line array.
+    Gets argument from generic command line array.
 
     Args:
         cl: list of command line argumetns
@@ -43,7 +43,7 @@ def get_cl(cl, name, default=None):
 
 def get(source, name, default=None):
     '''
-    Get argument from source array.
+    Gets argument from source array.
 
     Args:
         source: list of arguments and values
@@ -57,8 +57,8 @@ def get(source, name, default=None):
     assert len(name) > 0
 
     # append - of --, because otherwise
-    # the caller has to write - or -- every
-    # time he wants a value
+    # the caller has to write - or -- 
+    # every time he wants a value
     if len(name) == 1:
         name = '-' + name
     else:
@@ -71,7 +71,7 @@ def get(source, name, default=None):
     except ValueError:
         return default
 
-    # name is last argument -> no value
+    # if name is the last argument -> no value ->
     # return default
     if index >= len(source) - 1:
         return default

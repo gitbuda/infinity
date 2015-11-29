@@ -55,7 +55,7 @@ class SingleDocumentResource(DocumentBase):
 
     def on_get(self, req, resp, identifier):
         '''
-        Return document with the identifier.
+        Returns document with the identifier.
         '''
         cursor = self.documents.find({"identifier": identifier})
         if cursor.count() <= 0:
@@ -100,8 +100,8 @@ class DocumentResource(DocumentBase):
     @falcon.before(max_body(64 * 1024))
     def on_post(self, req, resp):
         '''
-        Create new document. If the same document
-        exists do nothing, only return document id.
+        Creates new document. If the same document
+        exists the function does nothing, only returns document's id.
         '''
         body = req.context['doc']
         if 'content' not in body:

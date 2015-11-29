@@ -2,8 +2,8 @@
 
 '''
 Results from any kind of query or search have to be
-paged because if there is let say 1M result objects the client
-for sure doesn't want to see them all at once.
+paged because if there is, let's say 1M result objects,
+the client doesn't want to see them all at once for sure.
 
 Via object of this class client can define the range of
 results which will be returned.
@@ -23,7 +23,7 @@ class Page(object):
                     start index                 end index
 
         Args:
-            page_num: order number of page (starts with 0)
+            page_num: ordinal number of page (starts with 0)
             page_size: number of entities within one page
         '''
         self.start_index = page_num * page_size
