@@ -1,3 +1,31 @@
 # Infinity - ranking search engine
 
-[Web interface](http://infinity.buda.link)
+## Algorithms
+
+* Normalized bag of words
+* Vector space (TF * IDF)
+* Binary independence
+
+## Arhitecture
+
+![Infinity Arhitecture](/doc/infinity.png)
+
+## Interfaces
+
+* [Web interface](http://infinity.buda.link)
+* Console interface (console.py)
+
+## Requirements
+
+* python3
+
+## Installation (console interface)
+
+```
+git clone https://github.com/gitbuda/infinity.git
+cd infinity
+source setup.py
+python console.py
+```
+
+If the above code fail all requirements are listed inside the requirements.txt file.
