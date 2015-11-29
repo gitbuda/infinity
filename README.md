@@ -24,7 +24,7 @@
 ```
 git clone https://github.com/gitbuda/infinity.git
 cd infinity
-source setup.py
+source setup.sh
 python console.py
 ```
 
