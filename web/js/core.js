@@ -33,7 +33,7 @@ app.service('remoteData', function () {
 
 app.service('pageData', function () {
   var pagenum = 0;
-  var pagesize = 3;
+  var pagesize = 5;
   return {
     getPageNum: function () {
       return pagenum;

@@ -1,0 +1,30 @@
+# HTTP database interface
+upstream idb {
+    server idb.infinity.buda.link:9002;
+}
+
+# worker instances
+upstream workers {
+    server worker1.infinity.buda.link:8001;
+    server worker2.infinity.buda.link:8002;
+}
+
+server {
+    listen 80;
+    server_name infinity.buda.link;
+
+    location /api/data/ {
+        include    uwsgi_params;
+	uwsgi_pass idb;
+    }
+
+    location /api/ {
+        include     uwsgi_params;
+        uwsgi_pass  workers;
+    }
+
+    location ~ \.(gif|jpg|png|html|js|css)$ {
+	index index.html;
+        root /opt/deploy/www/infinity;
+    }
+}
