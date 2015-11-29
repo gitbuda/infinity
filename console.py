@@ -15,10 +15,10 @@ Implemented algorithms:
 '''
 
 import shlex
-import parser
 import logging
 import readline  # NOQA
 import util.argument as arg
+from preprocess.parser import parse
 from data_structure.page import Page
 from data_structure.document import text_hash
 from algorithm.algorithm_box import AlgorithmBox
@@ -43,10 +43,10 @@ if __name__ == '__main__':
 
     # load local files
     # files_path = 'test-small/subset'
-    files_path = '20news-18828/alt.atheism'
-    # files_path = '20news-18828'
+    # files_path = '20news-18828/alt.atheism'
+    files_path = '20news-18828'
     logger.info('Loading files...')
-    files = parser.parse(files_path, 'iso-8859-1')
+    files = parse(files_path, 'iso-8859-1')
     logger.info('Files from %s are loaded.' % files_path)
 
     # create algorithm box object (context object)
