@@ -7,6 +7,7 @@ CLI interface.
 -q "query" -> "It is a basic principle of Islam that if one is born muslim..."
 -a "algorithm" -> "bag_of_words"
 -n "number of results" -> 20
+-d "document" -> add new document
 
 Implemented algorithms:
     bag_of_words
@@ -36,11 +37,6 @@ if __name__ == '__main__':
     RESULTS = 20
     DOCUMENT = ''
 
-    # get input arguments
-    query = arg.get_argv('q', QUERY)
-    algorithm_name = arg.get_argv('a', ALGORITHM)
-    number_of_results = int(arg.get_argv('n', RESULTS))
-
     # load local files
     # files_path = 'test-small/subset'
     # files_path = '20news-18828/alt.atheism'
@@ -52,14 +48,6 @@ if __name__ == '__main__':
     # create algorithm box object (context object)
     algorithm_box = AlgorithmBox()
     algorithm_box.files = files
-
-    # execute algorithm
-    page = Page(0, number_of_results)
-    algorithm = algorithm_box.algorithm(algorithm_name)
-    rank = algorithm.run(query, page)
-    print()
-    logger.info("Result: %s" % rank)
-    print()
 
     print()
     print('---- MANUAL ----------')
@@ -82,13 +70,16 @@ if __name__ == '__main__':
             print("Bye!")
             break
 
+        # get arguments
         query = arg.get_cl(command_line, 'q', QUERY)
         algorithm_name = arg.get_cl(command_line, 'a', ALGORITHM)
         number = int(arg.get_cl(command_line, 'n', RESULTS))
         document = arg.get_cl(command_line, 'd', DOCUMENT)
 
+        # store new document is user specified -d option
+        # and ask user for next command because add document
+        # option has a higher priority than other commands
         if document is not '':
-            # TODO: replace with UUID
             document_hash = text_hash(document)
             files[document_hash] = document
             algorithm_box.append(document)
@@ -96,7 +87,7 @@ if __name__ == '__main__':
                         (document_hash, document))
             continue
 
-        # try to execute the algorithm
+        # otherwise try to execute the algorithm
         try:
             page = Page(0, number)
             algorithm = algorithm_box.algorithm(algorithm_name)
@@ -105,5 +96,10 @@ if __name__ == '__main__':
             logger.info("Result: %s" % rank)
             print()
         except Exception as e:
+            # print stack trace (because in exception
+            # is information about an error)
+            # otherwise all errors inside try block
+            # will not be visible to programmer -> hard
+            # do debug
             import traceback
             traceback.print_exc()

@@ -10,8 +10,8 @@ import logging
 import numpy as np
 from util.timeit import timeit
 from preprocess.bager import bag
-from scipy.sparse import lil_matrix
-from scipy.sparse import csr_matrix
+from scipy.sparse import csr_matrix, lil_matrix
+from scipy.sparse import vstack, hstack
 from data_structure.page import Page
 from preprocess.tokenizer import tokenize_text
 from preprocess.preprocessor import preprocess_one
@@ -81,9 +81,12 @@ class IRAlgorithm:
                 self.tokens[token] = self.tokens_no
                 self.tokens_no += 1
 
+        new_tf_shape = (self.docs_no, self.tokens_no)
+        new_idf_shape = (1, self.tokens_no)
+
         # resize matrices
-        tf_lil = resize_to_lil(self.tf, (self.docs_no, self.tokens_no))
-        idf_lil = resize_to_lil(self.idf, (1, self.tokens_no))
+        tf_lil = resize_tf(self.tf, new_tf_shape)
+        idf_lil = resize_idf(self.idf, new_idf_shape)
 
         # update tf
         max_freq = document.bag[max(document.bag, key=document.bag.get)]
@@ -97,6 +100,7 @@ class IRAlgorithm:
             index = self.tokens[token]
             idf_lil[0, index] += 1
 
+        # convert back to csr (faster multiplication)
         self.tf = tf_lil.tocsr()
         self.idf = idf_lil.tocsr()
 
@@ -219,6 +223,49 @@ class IRAlgorithm:
         print('----------------')
 
 
+def resize_tf(matrix, new_shape):
+    '''
+    Take matrix and append rows and columns
+    to fit the new shape. Fill out with zeros.
+
+    Args:
+        matrix: csr matrix
+        new shape: numpy shape tuple
+
+    Returns:
+        matrix: resized lil matrix
+    '''
+    original_shape = matrix.shape
+    row = csr_matrix((1, original_shape[1]))
+    matrix = vstack([matrix, row])
+    cols_no = new_shape[1] - original_shape[1]
+    if cols_no <= 0:
+        return matrix
+    col = csr_matrix((new_shape[0], cols_no))
+    matrix = hstack([matrix, col])
+    return matrix.tolil()
+
+
+def resize_idf(matrix, new_shape):
+    '''
+    Take matrix and append cols to fit the new shape.
+
+    Args:
+        matrix: csr matrix
+        new shape: numpy shape tuple
+
+    Returns:
+        matrix: resized lil matrix
+    '''
+    original_shape = matrix.shape
+    cols_no = new_shape[1] - original_shape[1]
+    if cols_no <= 0:
+        return matrix
+    col = csr_matrix((1, cols_no))
+    matrix = hstack([matrix, col])
+    return matrix.tolil()
+
+
 def resize_to_lil(matrix, shape):
     '''
     Resize sparse matrix by converting it
@@ -234,6 +281,7 @@ def resize_to_lil(matrix, shape):
     Returns:
         reshaped lil_matrix
     '''
+
     tf_dok = matrix.todok()
     tf_dok.resize(shape)
     return tf_dok.tolil()
