@@ -10,6 +10,7 @@
 \usepackage[croatian]{babel}
 \usepackage[T1]{fontenc}
 \usepackage{listings}
+\usepackage{array}
 
 % TODO: align, verbatim blocks
 
@@ -53,13 +54,13 @@ Testni skup dokumenata:
 
 Testno računalo:
 \begin{itemize}
-\item RAM: 7880944 kB; 1600MHz
 \item CPU: Intel(R) Core(TM) i3-4010U CPU @ 1.70GHz
+\item RAM: 7880944 kB; 1600MHz
 \end{itemize}
 
 \section{Pretprocesiranje}
 
-Bitan segment analize teksa je predprocesiranje. Predprocesiranje počinje s podjelom dokumenta na riječi \engl{tokenization}. Implementiran je jednostavni tokenizator koji prvo zamijenjuje posebna znakove s prazninama, nakon toga odbacuje riječi duže od 25 znakova (25 je nastao subjektivnom procjenom) i na kraju se radi svođenje riječi na jednostavniji oblik \engl{stemming}. Korišten je Snowball (Porter2) stemmer zato što je manje agresivan od Lancaster stemmer-a, a brži od Porter stemmer-a. Uvođenjem stemmer-a naraslo je vrijeme izvođenja pretprocesiranja i to za $\sim$4 puta (koristi se stemming Python modul). Trebalo bi koristiti neku brzu C/C++ implementaciju stemming postupka. Nije se koristio lematizator zato što je bitno očuvati riječi što je moguče više onakve kakve jesu. Primjerice, ne bi bilo dobro zamijeniti \textit{is} s \textit{be}, jer je korisnik možda baš htio dokumente gdje se pojavljuje \textit{is}. Lematizator bi \textit{is} riječ zamijenio s riječi \textit{be} i tu bi se izbugila informacija (opet subjektivna procjena). Kada bi postojala potreba za lematizatorom tada bi se uz Python koristio spacy lematizator i to zato što je brži u odnosu na, primjerice, nltk lematizatora. 
+Bitan segment analize teksta je pretprocesiranje. Pretprocesiranje počinje s podjelom dokumenta na riječi \engl{tokenization}. Implementiran je jednostavni tokenizator koji prvo zamijenjuje posebna znakove s prazninama, nakon toga odbacuje riječi duže od 25 znakova (25 je nastao subjektivnom procjenom) i na kraju se radi svođenje riječi na jednostavniji oblik \engl{stemming}. Svođenje riječi na jednostavniji oblik je potrebno, primjerice, zato da bi se riječ $testing$ svela na $test$ (ako upit sadrži riječ $test$, dokument u kojem se nalazi riječ $testing$ jer poprilično bitan dokument). Korišten je Snowball (Porter2) stemmer zato što je manje agresivan od Lancaster stemmer-a, a brži od Porter stemmer-a. Uvođenjem stemmer-a naraslo je vrijeme izvođenja pretprocesiranja i to za $\sim$4 puta (koristi se stemming Python modul). Trebalo bi koristiti neku brzu C/C++ implementaciju stemming postupka. Nije se koristio lematizator zato što je bitno očuvati riječi što je moguče više onakve kakve jesu. Primjerice, ne bi bilo dobro zamijeniti \textit{is} s \textit{be}, jer je korisnik možda baš htio dokumente gdje se pojavljuje \textit{is}. Lematizator bi \textit{is} riječ zamijenio s riječi \textit{be} i tu bi se izbugila informacija (opet subjektivna procjena). Kada bi postojala potreba za lematizatorom tada bi se uz Python koristio lematizator Spacy i to zato što je brži u odnosu na, primjerice, lematizator NLTK. 
 
 \section{Algoritmi}
 
@@ -85,17 +86,53 @@ Temelj algoritma binarne nezavisnoti je formuala:
 \end{align}
 gdje se $p(D_t|q, r)$ procjenjuje na $0.5$, a $p(D_t|q, \bar r)$ na $n_t / N_d$, gdje je pak $n_t$ broj dokumenata u kojima se nalazi riječ $t$, a $N_d$ ukupan broj dokumenata.
 
-Implementacija složenost algoritma ovisi o broju dokumenata nad kojima se vrši rangiranje. Konkretno, za dani upit potrebno je obići sve dokumente kako bi se dobila procijenjena vjerojatnosti $p(D_t|q, \bar r)$. Danu procjenu u teoriji je moguče predprocesirati, no budući da bi predprocesiranih podataka bilo $(broj\_dokumenata \cdot broj\_tokena)$, to je u praksi nemoguče napraviti. Problem bi se moglo riješiti tako da se skup dokumenata podijeli na dovoljno male podskupine unutar kojih bi se onda radilo rangiranje.
+Implementacija složenost algoritma ovisi o broju dokumenata nad kojima se vrši rangiranje. Konkretno, za dani upit potrebno je obići sve dokumente kako bi se dobila procijenjena vjerojatnosti $p(D_t|q, \bar r)$. Danu procjenu u teoriji je moguče pretprocesirati, no budući da bi pretprocesiranih podataka bilo $(broj\_dokumenata \cdot broj\_tokena)$, to je u praksi nemoguče napraviti. Problem bi se moglo riješiti tako da se skup dokumenata podijeli na dovoljno male podskupine unutar kojih bi se onda radilo rangiranje. Ekvivalentan postupak mogao bi se provesti za svaki od promatranih algoritama.
 
 Problem kod algoritma je i da ako je ulaz jedan token, procijenjene težine za svaki dokument su iste i onda je nemoguče napraviti kvalitetno rangiranje. To bi se moglo riješiti tako da se na težinu za pojedini token doda normalizirani broj njegovog pojavljivanja unutar dokumenta.
 
-\section{Implemntacija}
+\section{Implementacijski detalji}
 
-Svaki algoritam tipa je \textit{IRAlgorithm}. Taj tip posjeduje četiri metode. \textit{config} putem koje se prima nekakva konfiguracija algoritma, ako takva za dani algoritam postoji. \textit{preprocess\_all} kroz koju se radi predprocesiranje svih dostupnih dokumenata. \textit{preprocess\_one} putem koje se radi predprocesiranje samo jednog novog dokumenta. I, \textit{run} koja vrača konkretne rezultate. Kako bi se izbjeglo pokretanje predprocesiranja svaki put kada se treba pokrenuti neki algoritam uveden je razred AlgorithmBox koji posjeduje instance svih dostupnih algoritama u varijabli \textit{available\_algorithms}. U varijabli \textit{prepared\_algorithms} nalaze se samo one instance algoritama za koje je već proveden proces predprocesiranja. Varijabla \textit{prepared\_algorithms} se prilikom svakog postavljanja novih dokumenata kroz \textit{setter files} postavi na prazni riječnik. Na taj način se postiže da se kod idučeg dohvačanja nekog algoritma ponovno forsira proces predprocesiranja. Ukoliko se dodao samo jedan dokument onda se samo pozove metoda \textit{preprocess\_one} nad svim algoritmima koji su unutar riječnika \textit{prepared\_algorithms}. Mana ovog pristupa je što svaki algoritam za sebe drži kopiju svih dokumenata i ponavljanje predprocesiranja za svaki algoritam posebno. Prednost je, svojstvo da svaki algoritam ima izolirani skup podataka s kojim može činiti što je već potrebno kako bi algoritam valjano radio. Odlučio sam se za taj pristup zato što je memorija manji problem od nekakve jednostavnosti korištenja i važnosti da je svaki algoritam za sebe izoliran. Jedna od mana trenutne implementacija je i što se dokumenti pamte unutar riječnika. Optimalnije bi bilo pamtiti dokumente unutar liste, te imati potporne strukture podataka kao što su riječnici u kojima bi se pamtilo primjerice na kojoj poziciji u listi je određeni dokument.
+Svaki algoritam tipa je \textit{IRAlgorithm}. Taj tip posjeduje četiri metode. \textit{config} putem koje se prima nekakva konfiguracija algoritma, ako takva za dani algoritam postoji. \textit{preprocess\_all} kroz koju se radi pretprocesiranje svih dostupnih dokumenata. \textit{preprocess\_one} putem koje se radi pretprocesiranje samo jednog novog dokumenta. I, \textit{run} koja vrača konkretne rezultate. Kako bi se izbjeglo pokretanje pretprocesiranja svaki put kada se treba pokrenuti neki algoritam uveden je razred AlgorithmBox koji posjeduje instance svih dostupnih algoritama u varijabli \textit{available\_algorithms}. U varijabli \textit{prepared\_algorithms} nalaze se samo one instance algoritama za koje je već proveden proces pretprocesiranja. Varijabla \textit{prepared\_algorithms} se prilikom svakog postavljanja novih dokumenata kroz \textit{setter files} postavi na prazni riječnik. Na taj način se postiže da se kod idučeg dohvačanja nekog algoritma ponovno forsira proces pretprocesiranja. Ukoliko se dodao samo jedan dokument onda se samo pozove metoda \textit{preprocess\_one} nad svim algoritmima koji su unutar riječnika \textit{prepared\_algorithms}. Mana ovog pristupa je što svaki algoritam za sebe drži kopiju svih dokumenata i ponavljanje pretprocesiranja za svaki algoritam posebno. Prednost je, svojstvo da svaki algoritam ima izolirani skup podataka s kojim može činiti što je već potrebno kako bi algoritam valjano radio. Odlučio sam se za taj pristup zato što je memorija manji problem od nekakve jednostavnosti korištenja i važnosti da je svaki algoritam za sebe izoliran. Jedna od mana trenutne implementacija je i što se dokumenti pamte unutar riječnika. Optimalnije bi bilo pamtiti dokumente unutar liste, te imati potporne strukture podataka kao što su riječnici u kojima bi se pamtilo primjerice na kojoj poziciji u listi je određeni dokument.
+
+\section{Produkcijska okolina}
+
+Kao što se vidi na slici \ref{production_environment}, svi upiti klijenata dolaze na Nginx load balancer koji ima izrazito veliku propusnost. Nakon toga load banancer prosljeđuje upit na worker instance koje, svaka za sebe, imaju cijeli dataset i znaju vratiti odgovarajući rezultat. Dataset worker instance preuzimaju od DB interface instance, a ne direktno iz baze. Trenutno je u deploymentu samo jedna instanca sučelja prema bazi, ali u produkciji tu može biti opet load balancer i više instanci sučelja prema bazi podataka. Baza podataka je MongoDB, također samo jedna instanca, no u praksi tu može doći Mongo replica set ili Mongo shard cluster.
+
+Sve instance imaju simbolička imena (FQDN). To je također izrazito bitno jer se time postiže transparentnost pristupa i migracijska transparentnost. U konkretnoj implementaciji sva imena su definirana u /etc/hosts datoteci na deploy stroju (Digital ocean instanci), no u realnoj produkciji će imene biti definirana na redundantnim DNS serverima.
+
+\begin{figure}[!htbp]
+\begin{center}
+\includegraphics[width=\textwidth]{infinity.png}
+\end{center}
+\caption{Produkcijska okolina}\label{production_environment}
+\end{figure}
+
+Prilikom testiranje opterečenja instanci radnika, u obzir su uzeta dva najpopularnija WSGI servera gunicorn i uWSGI, testiranje je provedeno s bag of words algoritmom, a rezultati su vidljivi u tablici ispod. Najbolje rezultate daje konfiguracija u kojoj je uWSGI iza Nginx-a u socket načinu rada.
+
+\vspace{0.3cm}
+
+\begin{center}
+    \begin{tabular}{ | p{4cm} | p{4cm} |}
+    \hline 
+    \multicolumn{1}{|c|}{\textbf{konfiguracija}} & \multicolumn{1}{c|}{\textbf{req/s}} \\
+    \hline gunicorn & 1245,64 \\ 
+    \hline uWSGI & 1767,23 \\
+    \hline Nginx + uWSGI & 1915,63 \\
+    \hline
+    \end{tabular}
+\end{center}
+
+\vspace{0.3cm}
+
+Instanca baze (MongoDB) pokrenuta je unutar Docker kontejnera. Prednosti Docker kontejnera su: automatizirani proces izgradnje kontejnera i lakši postupak pokretanja procesa koji je untar Docker kontejnera. Na taj način poslužiteljsko računalo nije direktno ovisno o procesu kojeg pokreće. Docker kontejner, se  u apstraktnom smislu, može shvatiti kao omotač oko procesa koji je unutar njega pokrenut. Cijeli sustav bi bio robusniji i lakši za održavanje kada bi procesi bili unutar Docker kontejnera. Primjer izgradnje Docker kontejnera i pokretanje uWSGI procesa vidljiv je u skripti dostupnoj na \url{https://github.com/gitbuda/infinity/blob/master/web-base.dockerfile}
+
+Web sučelje implementirano je uz pomoć \url{https://angularjs.org} (MVC web radnog okvira) i \url{http://materializecss.com}. Dakle, napravljena je klijentska MVC aplikacija koja uzima podatke u JSON formatu sa servera. Postupak prikaza HTML-a i CSS-a ostavljen je na klikentskoj strani. Nginx može veome brzo posluživati statične datoteke i ne postoji opterečenje generiranja cijelokupnog HTML-a na serverskoj strani. Sučelje se može isprobati na \url{http://infinity.buda.link}
+
+Cjelokupni sustav postavljen je na Digital ocean poslužitelju. Prednosti Digital oceana nad ostalim VPS pružateljima su: SSD diskovne jedinice, optimizirana KVM virtualizacija, povoljna cijena, podatkovni centri u Americi, Aziji i Europi, jako intuitivna kontrolna ploča (engl. management panel).
 
 \section{Upute za pokretanje}
 
-Kako bi se instaliralo sve što je potrebno za pokretanje konzolne aplikacije potrebno je na računalu imati python, pip i virtualenv, tj. sve za rad s programskim jezikom Python3. Kroz konzolnu aplikaciju moguče je pokretati sva tri algoritma.
+Kako bi se instaliralo sve što je potrebno za pokretanje konzolne aplikacije potrebno je na računalu imati python, pip i virtualenv, tj. sve za rad s programskim jezikom python3. Kroz konzolnu aplikaciju moguće je pokretati sva tri algoritma.
 
 Izvorni kod: \url{https://github.com/gitbuda/infinity.git}
 
@@ -106,43 +143,30 @@ $ source setup.py
 $ python console.py
 \end{lstlisting}
 
-Web sučelje nalazi se na adresi: \url{https://infinity.buda.link}. Trenutno je moguče vidjeti razultate koje daje bag of words algoritam.
+Web sučelje nalazi se na adresi: \url{https://infinity.buda.link}. Trenutno je moguče vidjeti samo razultate koje daje bag of words algoritam.
 
-\section{Produkcijska okolina}
-
-Svi upiti klijenata dolaze na Nginx load balancer koji ima izrazito veliku propusnost. Nakon toga load banancer prosljedjuje upit na worker instance koje svaka za sebe imaju cijeli dataset i znaju vratiti odgovarajuci rezultat. Dataset worker instance preuzimaju od db interface instance, a ne direktno iz baze. Trenutno je u deploymentu samo jedna instanca sucelja prema bazi, ali u produkciji tu moze biti opet load balancer i vise instanci interface-a prema bazi podataka. Baza podataka je MongoDB, takodjer samo jedna instanca, no u praksi tu moze doci mongo replica set ili mongo shard cluster.
-
-Kao sto se vidi na slici \ref{production_environment}, sve instance imaju simbolicka imena (FQDN). To je takodjer izrazito bitno jer se time postize transparentnost pristupa i migracijska transparentnost. U konkretnoj implementaciji sva imena su definirana u /etc/hosts file-u na deploy stroju, no u produkciji ce imene biti definirana na redundantnim DNS serverima.
-
-\begin{figure}[!htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{infinity.png}
-\end{center}
-\caption{Produkcijska okolina}\label{production_environment}
-\end{figure}
-
-Prilikom testiranje opterečenja instanci radnika, u obzir su uzeta dva najpopularnija WSGI servera gunicorn i uWSGI, testiranje je provedeno s bag of words algoritmom, a rezultati su vidljivi u tablici ispod. Najbolje rezultate daje konfiguracija u kojoj je uWSGI iza Nginx-a u socket načinu rada.
 \vspace{0.3cm}
-\begin{center}
-    \begin{tabular}{ | p{5cm} | p{5cm} |}
-    \hline
-    konfiguracija & req/s \\ \hline
-	gunicorn & 1245,64 \\ \hline
-    uWSGI & 1767,23 \\ \hline
-    Nginx + uWSGI & 1767,23 \\ \hline
-    \end{tabular}
-\end{center}
 
-\section{Web sučelje}
+\textbf{P. S.}\\
+\\
+Infinity > Googleplex
 
-TODO: Angular + materializecss
+\medskip
+ 
+\begin{thebibliography}{9}
 
-TODO: nekakva slika sučelja
+\bibitem{TAR}
+FER, Text Analysis and Information Retrieval (TAR), 2013/2014, TAR-03-IR.pdf
 
-\section{PS}
+\bibitem{improvement_tf_idf_1}
+Tian Xia, Yanmei Chai; An Improvement to TF-IDF: Term Distribution based Term Weight Algorithm; 2011 ACADEMY PUBLISHERE
 
-infinity $>$ gugol
+\bibitem{improvement_tf_idf_2}
+Mingyong Liu, Jiangang Yang, An improvement of TFIDF weighting in text categorization; 2012 International Conference on Computer Technology and Science, Singapore
 
-\bibliographystyle{plain}
-\bibliography{bibliography.bib}
+\bibitem{www}
+Za sve ostale implemtacijske detalje: www
+
+\end{thebibliography}
+
 \end{document}

@@ -8,7 +8,7 @@ let say "test" all documents with "test" term inside have
 the same wight sum.
 
 Documentation:
-    FER Text Analysis and Information Retrieval (TER)
+    FER Text Analysis and Information Retrieval (TAR)
     year: 2013/2014 slides: TAR-03-IR.pdf slide: 38-42
 '''
 

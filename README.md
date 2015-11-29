@@ -28,4 +28,4 @@ source setup.py
 python console.py
 ```
 
-If the above code fail all requirements are listed inside the requirements.txt file.
+If the above code fail all requirements are listed inside the requirements_all.txt and requirements_console.txt files and have to be manually installed.
