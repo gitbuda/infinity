@@ -25,7 +25,7 @@
   <ul class="collection">
     <li class="collection-item" ng-repeat="document in queryResult">
       <span class="title"><b>{{document.id}}</b></span>
-      <p>{{document.content}}</p>
+      <p ng-bind-html="document.content | highlight:queryText"></p>
     </li>
   </ul>
 

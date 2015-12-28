@@ -92,7 +92,16 @@ app.controller('queryController', function($q, $scope, $location, $http, remoteD
   }
 });
 
-app.controller('listController', function($q, $scope, $http, remoteData, pageData) {
+app
+.filter('highlight', function($sce) {
+    return function(text, phrase) {
+        phrase = phrase.replace(/\s+/g, '|')
+        if (phrase) 
+            text = text.replace(new RegExp('('+phrase+')', 'gi'), '<span class="highlighted">$1</span>')
+        return $sce.trustAsHtml(text)
+    }
+})
+.controller('listController', function($q, $scope, $http, remoteData, pageData) {
   var pageNum = 0;
   $scope.queryText = remoteData.getQuery();
   $scope.queryResult = remoteData.getResult();
