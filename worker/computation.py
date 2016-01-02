@@ -6,7 +6,6 @@ Computational instance.
 
 import json
 import falcon
-import parser
 import requests
 from data_structure.page import Page
 from common.falcon.middleware.max_body import max_body

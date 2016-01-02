@@ -13,6 +13,22 @@ web-idb:
     - db:db.infinity.buda.link
   restart: always
 
+worker-idb:
+  build: .
+  dockerfile: worker-idb.dockerfile
+  container_name: worker-idb
+  links:
+    - db:db.infinity.buda.link
+  restart: always
+
+worker:
+  build: .
+  dockerfile: worker.dockerfile
+  container_name: worker
+  links:
+    - worker-idb:idb.infinity.buda.link
+  restart: always
+
 web:
   build: .
   dockerfile: web.dockerfile
