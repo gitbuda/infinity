@@ -14,9 +14,12 @@ ADD common /app/common
 ADD data_structure /app/data_structure
 ADD preprocess /app/preprocess
 ADD util /app/util
+ADD worker /app/worker
 
 ENV TERM dumb
 ENV PYTHONPATH $PYTHONPATH:/app
 
 EXPOSE 8001
+
+WORKDIR /app/worker
 CMD uwsgi --http-socket 0.0.0.0:8001 --wsgi-file computation.py --callable app --processes 2 --threads 1 --master --disable-logging --buffer-size 32768
