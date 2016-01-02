@@ -1,0 +1,24 @@
+db:
+  image: mongo
+  container_name: db
+  expose:
+    - "27017"
+  restart: always
+
+web-idb:
+  build: .
+  dockerfile: web-idb.dockerfile
+  container_name: web-idb
+  links:
+    - db:db.infinity.buda.link
+  restart: always
+
+web:
+  build: .
+  dockerfile: web.dockerfile
+  container_name: web
+  links:
+    - web-idb:idb.infinity.buda.link
+  ports:
+    - "7000:80"
+  restart: always
