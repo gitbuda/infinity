@@ -12,6 +12,8 @@ RUN mkdir -p /app
 COPY common /app/common
 COPY database /app/database
 COPY data_structure /app/data_structure
+COPY preprocess /app/preprocess
+COPY 20news-18828 /app/20news-18828
 
 ENV TERM dumb
 ENV PYTHONPATH $PYTHONPATH:/app
@@ -19,4 +21,4 @@ ENV PYTHONPATH $PYTHONPATH:/app
 EXPOSE 9001
 
 WORKDIR /app/database
-CMD uwsgi --http-socket 0.0.0.0:9001 --wsgi-file rest.py --callable app --processes 1 --threads 1 --master --disable-logging --buffer-size 32768
+CMD uwsgi --http-socket 0.0.0.0:9001 --wsgi-file rest.py --callable app --processes 1 --threads 1 --master --logto /app/log.txt --buffer-size 32768

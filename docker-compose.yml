@@ -35,6 +35,7 @@ web:
   container_name: web
   links:
     - web-idb:idb.infinity.buda.link
+    - worker:worker1.infinity.buda.link
   ports:
     - "7000:80"
   restart: always

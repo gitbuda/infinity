@@ -2,8 +2,8 @@
 
 import json
 import falcon
-# import parser
 import datetime
+import preprocess.parser as parser
 from pymongo import MongoClient
 from bson.json_util import dumps
 from bson.objectid import ObjectId
@@ -24,9 +24,11 @@ class DocumentBase(object):
                                   connect=False)
         self.db = self.client.styria
         self.documents = self.db.documents
-        # files = parser.parse('../20news-18828', 'iso-8859-1')
-        # for file_name, file_content in files.items():
-        #     self.insert(file_content)
+        count = self.documents.count()
+        if count <= 0:
+            files = parser.parse('../20news-18828', 'iso-8859-1')
+            for file_name, file_content in files.items():
+                self.insert(file_content)
 
     def insert(self, content):
         '''

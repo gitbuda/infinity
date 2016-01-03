@@ -12,8 +12,8 @@
 
 ## Interfaces
 
-* [Web interface](http://infinity.buda.link)
-* Console interface (console.py)
+* Console interface
+* Web interface
 
 ## Requirements
 
@@ -29,3 +29,9 @@ python console.py
 ```
 
 If the above code fails all requirements are listed inside the requirements_console.txt file and have to be manually installed.
+
+## Installation (web interface)
+
+```
+docker-compose up -d
+```
