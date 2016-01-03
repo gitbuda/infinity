@@ -141,9 +141,9 @@ Prilikom testiranja opterećenja instanci radnika, u obzir su uzeta dva najpopul
 
 \vspace{0.3cm}
 
-Instanca baze (MongoDB) pokrenuta je unutar Docker kontejnera. Prednosti Docker kontejnera su: automatizirani proces izgradnje kontejnera i lakši postupak pokretanja procesa koji je untar Docker kontejnera. Na taj način poslužiteljsko računalo nije direktno ovisno o procesu kojeg pokreće. Docker kontejner, se  u apstraktnom smislu, može shvatiti kao omotač oko procesa koji je unutar njega pokrenut. Cijeli sustav bi bio robusniji i lakši za održavanje kada bi procesi bili unutar Docker kontejnera. Primjer izgradnje Docker kontejnera i pokretanje uWSGI procesa vidljiv je u skripti dostupnoj na \url{https://github.com/gitbuda/infinity/blob/master/web-base.dockerfile}
+Sve komponente sustava mogu biti pokrenute untar Docker kontejnera. Prednosti Docker kontejnera su: automatizirani proces izgradnje kontejnera i lakši postupak pokretanja procesa koji je untar Docker kontejnera. Na taj način poslužiteljsko računalo nije direktno ovisno o procesu kojeg pokreće. Docker kontejner, se u apstraktnom smislu, može shvatiti kao omotač oko procesa koji je unutar njega pokrenut. Cijeli sustav je robusniji i lakši za održavanje zbog toga što su procesi pokrenuti unutar Docker kontejnera.
 
-Web sučelje implementirano je uz pomoć \url{https://angularjs.org} (MVC web radnog okvira) i \url{http://materializecss.com}. Dakle, napravljena je klijentska MVC aplikacija koja uzima podatke u JSON formatu sa servera. Postupak prikaza HTML-a i CSS-a ostavljen je na klijentskoj strani. Nginx može veoma brzo posluživati statične datoteke i ne postoji opterećenje generiranja cijelokupnog HTML-a na serverskoj strani. Sučelje se može isprobati na \url{http://infinity.buda.link}
+Web sučelje implementirano je uz pomoć \url{https://angularjs.org} (MVC web radnog okvira) i \url{http://materializecss.com}. Dakle, napravljena je klijentska MVC aplikacija koja uzima podatke u JSON formatu sa servera. Postupak prikaza HTML-a i CSS-a ostavljen je na klijentskoj strani. Nginx može veoma brzo posluživati statične datoteke i ne postoji opterećenje generiranja cijelokupnog HTML-a na serverskoj strani.
 
 Cjelokupni sustav postavljen je na Digital ocean poslužitelju. Prednosti Digital oceana nad ostalim VPS pružateljima su: SSD diskovne jedinice, optimizirana KVM virtualizacija, povoljna cijena, podatkovni centri u Americi, Aziji i Europi, te jako intuitivna kontrolna ploča (engl. management panel).
 
@@ -160,16 +160,6 @@ $ source setup.sh
 $ python console.py
 \end{lstlisting}
 
-Web sučelje nalazi se na adresi: \url{https://infinity.buda.link}. Trenutno je moguće vidjeti samo razultate koje daje bag of words algoritam.
-
-\vspace{0.3cm}
-
-\textbf{P. S.}\\
-\\
-Infinity > Googleplex
-
-\medskip
- 
 \begin{thebibliography}{9}
 
 \bibitem{TAR}
